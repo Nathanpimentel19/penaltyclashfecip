@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class EscolhaDePaisManager : MonoBehaviour
 {
@@ -53,5 +54,10 @@ public class EscolhaDePaisManager : MonoBehaviour
             paisTime2 = bandeiras.Length - 1;
 
         bandeiraTime2.sprite = bandeiras[paisTime2];
+    }
+
+    public void Selecionar()
+    {
+        SceneManager.LoadScene("JogoPenaltis");
     }
 }
