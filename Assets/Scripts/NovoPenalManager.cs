@@ -6,30 +6,44 @@ public class NovoPenalManager : MonoBehaviour
     [Header("Personagens e Objetos")]
     public Transform bola;
     public Transform goleiro;
-    public Transform jogador; // Arraste o boneco do seu batedor aqui!
+    public Transform jogador;
 
     int golsjogador = 0;
     int chutesRealizados = 0;
     public int totalDeChutesDaPartida = 5;
 
     [Header("Coordenadas do Gol")]
-    public Vector2 superiorEsquerdo = new Vector2(-160f, 70f);
-    public Vector2 superiorDireito = new Vector2(160f, 70f);
-    public Vector2 inferiorEsquerdo = new Vector2(-160f, -40f);
-    public Vector2 InferiorDireito = new Vector2(160f, -40f);
-    public Vector2 centroDoGol = new Vector2(0f, 15f);
+    public Vector2 superiorEsquerdo = new Vector2(-5.71f, 1.78f);
+    public Vector2 superiorDireito = new Vector2(5.54f, 1.45f);
+    public Vector2 inferiorEsquerdo = new Vector2(-5.21f, -2.73f);
+    public Vector2 InferiorDireito = new Vector2(5.71f, -2.51f);
+    public Vector2 centroDoGol = new Vector2(0.08f, -0.84f);
+
+    private Vector2 posicaoInicialBola;
+    private Vector2 posicaoInicialGoleiro;
+
+    void Start()
+    {
+        // Guarda a posição da marca do pênalti e do meio do gol assim que o jogo inicia
+        if (bola != null) posicaoInicialBola = bola.position;
+        if (goleiro != null) posicaoInicialGoleiro = goleiro.position;
+    }
 
     public void RealizarChute(int cantoJogador)
     {
         if (chutesRealizados >= totalDeChutesDaPartida) return;
         chutesRealizados++;
 
-        // Move a bola para o canto escolhido
+        // RESET AUTOMÁTICO: Coloca a bola de volta na marca do pênalti e o goleiro no centro antes do chute acontecer!
+        if (bola != null) bola.position = posicaoInicialBola;
+        if (goleiro != null) goleiro.position = posicaoInicialGoleiro;
+
+        // Teletransporta a bola para o canto escolhido
         MoverObjetoParaCanto(bola, cantoJogador);
 
         // MECÂNICA DE DADOS COMBINADA COM OS AMIGOS:
-        int dadoBola = Random.Range(0, 101); // Dado da bola (0 a 100)
-        int dadoGoleiro = Random.Range(0, 71);  // Dado do goleiro (0 a 70)
+        int dadoBola = Random.Range(0, 101);
+        int dadoGoleiro = Random.Range(0, 71);
         int cantoGoleiro;
 
         if (dadoBola > dadoGoleiro) // GOL!
@@ -40,14 +54,14 @@ public class NovoPenalManager : MonoBehaviour
             cantoGoleiro = cantosErrados[indiceSorteado];
 
             golsjogador++;
+            GameData.PontuacaoAtual += 100;
 
-            // Mensagem informativa no console
-            Debug.Log($"[GOOOL] Bola: {dadoBola} vs Goleiro: {dadoGoleiro} -> A bola venceu! Goleiro pulou no canto {cantoGoleiro}.");
+            Debug.Log($"[GOOOL] Bola: {dadoBola} vs Goleiro: {dadoGoleiro} -> Goleiro pulou no canto {cantoGoleiro}. Pontos: {GameData.PontuacaoAtual}");
         }
         else // DEFESA!
         {
             cantoGoleiro = cantoJogador;
-            Debug.Log($"[DEFESA] Bola: {dadoBola} vs Goleiro: {dadoGoleiro} -> O goleiro venceu e defendeu no canto {cantoGoleiro}!");
+            Debug.Log($"[DEFESA] Bola: {dadoBola} vs Goleiro: {dadoGoleiro} -> Defesa no canto {cantoGoleiro}!");
         }
 
         MoverObjetoParaCanto(goleiro, cantoGoleiro);
@@ -71,7 +85,15 @@ public class NovoPenalManager : MonoBehaviour
 
     void ChamarOQuiz()
     {
-        Debug.Log("Fim dos pênaltis! Pronto para abrir o Quiz.");
-        // A ponte com o QuizManager será recolocada assim que criarmos o script do Quiz!
+        Debug.Log("Fim dos pênaltis! Abrindo o Quiz...");
+        QuizManager quiz = FindObjectOfType<QuizManager>();
+        if (quiz != null)
+        {
+            quiz.IniciarQuiz();
+        }
+        else
+        {
+            Debug.LogError("Erro: O script QuizManager não foi encontrado na cena!");
+        }
     }
 }
