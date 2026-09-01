@@ -82,6 +82,9 @@ public class EscolhaDePaisManager : MonoBehaviour
         if (siglasPaises.Length > paisTime2) GameData.SiglaTime2 = siglasPaises[paisTime2];
         if (bandeiras.Length > paisTime2) GameData.BandeiraTime2 = bandeiras[paisTime2];
 
+        // Linha de teste para ver a bandeira salva no Console da Unity
+        Debug.Log("Bandeira 1 salva: " + GameData.BandeiraTime1 + " | Sigla 1: " + GameData.SiglaTime1);
+
         // Carrega a sua cena do pênalti
         SceneManager.LoadScene("JogoPenaltis");
     }
