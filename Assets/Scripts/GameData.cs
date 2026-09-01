@@ -5,9 +5,11 @@ public static class GameData
     public static int PontuacaoAtual = 0;
     public static string PaisSelecionado = "";
 
-    public static string SiglaTime1 = "BRA";
+    // Dados do Time 1 (Esquerda)
     public static Sprite BandeiraTime1;
+    public static string SiglaTime1;
 
-    public static string SiglaTime2 = "FRA";
+    // Dados do Time 2 (Direita)
     public static Sprite BandeiraTime2;
+    public static string SiglaTime2;
 }
