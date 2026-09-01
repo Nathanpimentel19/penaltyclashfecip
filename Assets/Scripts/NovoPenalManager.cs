@@ -41,9 +41,9 @@ public class NovoPenalManager : MonoBehaviour
         // Teletransporta a bola para o canto escolhido
         MoverObjetoParaCanto(bola, cantoJogador);
 
-        // MECÂNICA DE DADOS COMBINADA COM OS AMIGOS:
+        // MECÂNICA DE DADOS EQUILIBRADA: Bola (0 a 100) vs Goleiro (0 a 50)
         int dadoBola = Random.Range(0, 101);
-        int dadoGoleiro = Random.Range(0, 71);
+        int dadoGoleiro = Random.Range(0, 51);
         int cantoGoleiro;
 
         if (dadoBola > dadoGoleiro) // GOL!

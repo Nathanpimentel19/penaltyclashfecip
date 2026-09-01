@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.UI;
 
 public class QuizManager : MonoBehaviour
 {
@@ -43,6 +44,12 @@ public class QuizManager : MonoBehaviour
 
     void GerarPerguntaUnica()
     {
+        if (textoPergunta == null || textoAlternativas == null || textoAlternativas.Length < 4)
+        {
+            Debug.LogError("Configure os componentes visuais no Inspector!");
+            return;
+        }
+
         List<int> anos = new List<int>(historicoCopas.Keys);
         int anoSorteado = anos[Random.Range(0, anos.Count)];
         campeaoCorreto = historicoCopas[anoSorteado];
@@ -65,7 +72,18 @@ public class QuizManager : MonoBehaviour
         string[] letras = { "A) ", "B) ", "C) ", "D) " };
         for (int i = 0; i < 4; i++)
         {
-            textoAlternativas[i].text = letras[i] + alternativasFinais[i];
+            if (textoAlternativas[i] != null)
+            {
+                textoAlternativas[i].text = letras[i] + alternativasFinais[i];
+
+                Button botaoPai = textoAlternativas[i].GetComponentInParent<Button>();
+                if (botaoPai != null)
+                {
+                    int indiceResposta = i;
+                    botaoPai.onClick.RemoveAllListeners();
+                    botaoPai.onClick.AddListener(() => Responder(indiceResposta));
+                }
+            }
         }
     }
 
@@ -73,8 +91,8 @@ public class QuizManager : MonoBehaviour
     {
         if (alternativaEscolhida == alternativaCorretaIndice)
         {
-            GameData.PontuacaoAtual += 100; // Soma +100 pontos globais se acertar!
-            Debug.Log("Resposta Correta!");
+            GameData.PontuacaoAtual += 100;
+            Debug.Log("Resposta Correta! +100 pontos.");
         }
         else
         {
@@ -87,15 +105,24 @@ public class QuizManager : MonoBehaviour
 
     void TerminarQuiz()
     {
-        textoPergunta.text = $"Fim do Jogo!\nPontuação Final Total: {GameData.PontuacaoAtual} pontos.";
+        if (textoPergunta != null)
+        {
+            textoPergunta.text = $"Fim do Jogo!\nPontuação Final Total: {GameData.PontuacaoAtual} pontos.";
+        }
 
         foreach (var texto in textoAlternativas)
         {
-            if (texto != null && texto.gameObject.transform.parent != null)
+            if (texto != null)
             {
-                texto.gameObject.transform.parent.gameObject.SetActive(false);
+                Button botaoPai = texto.GetComponentInParent<Button>();
+                if (botaoPai != null) botaoPai.gameObject.SetActive(false);
             }
         }
+    }
+
+    void Update()
+    {
+        AtualizarTextoDePontos();
     }
 
     void AtualizarTextoDePontos()
