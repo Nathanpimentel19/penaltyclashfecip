@@ -4,13 +4,13 @@ using UnityEngine.SceneManagement;
 
 public class EscolhaDePaisManager : MonoBehaviour
 {
-    [Header("Time 1")]
+    [Header("Time 1 (Jogador)")]
     public Image bandeiraTime1;
 
-    [Header("Time 2")]
+    [Header("Time 2 (Goleiro)")]
     public Image bandeiraTime2;
 
-    [Header("Bandeiras")]
+    [Header("Lista de Bandeiras")]
     public Sprite[] bandeiras;
 
     private int paisTime1 = 0;
@@ -58,6 +58,11 @@ public class EscolhaDePaisManager : MonoBehaviour
 
     public void Selecionar()
     {
+        // ADICIONADO: Grava a escolha final dos dois times na memória global do jogo!
+        GameData.PaisJogador = paisTime1;
+        GameData.PaisGoleiro = paisTime2;
+
+        // Carrega a cena das cobranças de falta/pênalti
         SceneManager.LoadScene("JogoPenaltis");
     }
 }
