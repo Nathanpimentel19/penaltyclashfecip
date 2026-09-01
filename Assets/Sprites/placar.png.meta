@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 2f8e4485b38bf0d449bf198aa7e58b9d
+guid: 92b37d2cb8f65f44da0afc1567edebc1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 933870502312550667
-    second: _273C4723-A00E-41AC-850D-8B13D0B78D2D_-removebg-preview_0
-  - first:
-      213: -7129286135880751243
-    second: _273C4723-A00E-41AC-850D-8B13D0B78D2D_-removebg-preview_1
+      213: -1056336849762588778
+    second: placar-Photoroom_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -116,34 +113,12 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: _273C4723-A00E-41AC-850D-8B13D0B78D2D_-removebg-preview_0
+      name: placar-Photoroom_0
       rect:
         serializedVersion: 2
-        x: 32
-        y: 425
-        width: 6
-        height: 12
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: b012e842646c5fc00800000000000000
-      internalID: 933870502312550667
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: _273C4723-A00E-41AC-850D-8B13D0B78D2D_-removebg-preview_1
-      rect:
-        serializedVersion: 2
-        x: 84
-        y: 231
-        width: 252
+        x: 134
+        y: 165
+        width: 157
         height: 32
       alignment: 0
       pivot: {x: 0, y: 0}
@@ -153,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 577e5b03800bf0d90800000000000000
-      internalID: -7129286135880751243
+      spriteID: 697eeba5b332751f0800000000000000
+      internalID: -1056336849762588778
       vertices: []
       indices: 
       edges: []
@@ -173,8 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      _273C4723-A00E-41AC-850D-8B13D0B78D2D_-removebg-preview_0: 933870502312550667
-      _273C4723-A00E-41AC-850D-8B13D0B78D2D_-removebg-preview_1: -7129286135880751243
+      placar-Photoroom_0: -1056336849762588778
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
