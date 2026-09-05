@@ -8,9 +8,19 @@ public class NovoPenalManager : MonoBehaviour
     public Transform goleiro;
     public Transform jogador;
 
-    int golsjogador = 0;
-    int chutesRealizados = 0;
-    public int totalDeChutesDaPartida = 5;
+    [Header("Link Direto com o Quiz (Arraste Aqui)")]
+    public QuizManager scriptQuizManager; // NOVO: Link físico direto para evitar falhas!
+
+    [Header("Configurações das Rodadas")]
+    public int totalDeChutesPorFase = 5;
+    private int chutesFaseChutador = 0;
+    private int chutesFaseGoleiro = 0;
+
+    int golsDoJogador = 0;
+    int defesasDoJogador = 0;
+    int golsDaMaquina = 0;
+
+    private int faseDoJogo = 0;
 
     [Header("Coordenadas do Gol")]
     public Vector2 superiorEsquerdo = new Vector2(-5.71f, 1.78f);
@@ -24,58 +34,90 @@ public class NovoPenalManager : MonoBehaviour
 
     void Start()
     {
-        // Guarda a posição da marca do pênalti e do meio do gol assim que o jogo inicia
         if (bola != null) posicaoInicialBola = bola.position;
         if (goleiro != null) posicaoInicialGoleiro = goleiro.position;
+
+        Debug.Log("[FASE 1 INICIADA] Você é o batedor! Chute no gol.");
     }
 
-    public void RealizarChute(int cantoJogador)
+    public void RealizarChute(int cantoClicado)
     {
-        if (chutesRealizados >= totalDeChutesDaPartida) return;
-        chutesRealizados++;
-
-        // RESET AUTOMÁTICO: Coloca a bola de volta na marca do pênalti e o goleiro no centro antes do chute acontecer!
         if (bola != null) bola.position = posicaoInicialBola;
         if (goleiro != null) goleiro.position = posicaoInicialGoleiro;
 
-        // Teletransporta a bola para o canto escolhido
-        MoverObjetoParaCanto(bola, cantoJogador);
-
-        // MECÂNICA DE DADOS EQUILIBRADA: Bola (0 a 100) vs Goleiro (0 a 50)
-        int dadoBola = Random.Range(0, 101);
-        int dadoGoleiro = Random.Range(0, 51);
-        int cantoGoleiro;
-
-        if (dadoBola > dadoGoleiro) // GOL!
+        if (faseDoJogo == 0)
         {
-            List<int> cantosErrados = new List<int> { 0, 1, 2, 3, 4 };
-            cantosErrados.Remove(cantoJogador);
-            int indiceSorteado = Random.Range(0, cantosErrados.Count);
-            cantoGoleiro = cantosErrados[indiceSorteado];
+            if (chutesFaseChutador >= totalDeChutesPorFase) return;
+            chutesFaseChutador++;
 
-            golsjogador++;
-            GameData.PontuacaoAtual += 100;
+            MoverObjetoParaCanto(bola, cantoClicado);
 
-            Debug.Log($"[GOOOL] Bola: {dadoBola} vs Goleiro: {dadoGoleiro} -> Goleiro pulou no canto {cantoGoleiro}. Pontos: {GameData.PontuacaoAtual}");
+            int dadoBola = Random.Range(0, 101);
+            int dadoGoleiro = Random.Range(0, 51);
+            int cantoGoleiro;
+
+            if (dadoBola > dadoGoleiro)
+            {
+                List<int> cantosErrados = new List<int> { 0, 1, 2, 3, 4 };
+                cantosErrados.Remove(cantoClicado);
+                int indiceSorteado = Random.Range(0, cantosErrados.Count);
+                cantoGoleiro = cantosErrados[indiceSorteado];
+
+                golsDoJogador++;
+                GameData.PontuacaoAtual += 100;
+            }
+            else
+            {
+                cantoGoleiro = cantoClicado;
+            }
+
+            MoverObjetoParaCanto(goleiro, cantoGoleiro);
+
+            if (chutesFaseChutador >= totalDeChutesPorFase)
+            {
+                Invoke("TrocarParaModoLoverGoleiro", 2f);
+            }
         }
-        else // DEFESA!
+        else if (faseDoJogo == 1)
         {
-            cantoGoleiro = cantoJogador;
-            Debug.Log($"[DEFESA] Bola: {dadoBola} vs Goleiro: {dadoGoleiro} -> Defesa no canto {cantoGoleiro}!");
-        }
+            if (chutesFaseGoleiro >= totalDeChutesPorFase) return;
+            chutesFaseGoleiro++;
 
-        MoverObjetoParaCanto(goleiro, cantoGoleiro);
+            int cantoChuteMaquina = Random.Range(0, 5);
+            MoverObjetoParaCanto(bola, cantoChuteMaquina);
+            MoverObjetoParaCanto(goleiro, cantoClicado);
 
-        if (chutesRealizados >= totalDeChutesDaPartida)
-        {
-            Invoke("ChamarOQuiz", 2f);
+            int dadoMaquina = Random.Range(0, 101);
+            int dadoGoleiroJogador = Random.Range(0, 51);
+
+            if (cantoChuteMaquina == cantoClicado && dadoGoleiroJogador >= 25)
+            {
+                defesasDoJogador++;
+                GameData.PontuacaoAtual += 100;
+            }
+            else
+            {
+                golsDaMaquina++;
+            }
+
+            if (chutesFaseGoleiro >= totalDeChutesPorFase)
+            {
+                Invoke("ChamarOQuizDefinitivo", 2f);
+            }
         }
+    }
+
+    void TrocarParaModoLoverGoleiro()
+    {
+        faseDoJogo = 1;
+        if (bola != null) bola.position = posicaoInicialBola;
+        if (goleiro != null) goleiro.position = posicaoInicialGoleiro;
+        Debug.Log("[FASE 2 INICIADA] Mudou de turno! Agora você é o goleiro.");
     }
 
     void MoverObjetoParaCanto(Transform objeto, int canto)
     {
         if (objeto == null) return;
-
         if (canto == 0) objeto.position = superiorEsquerdo;
         else if (canto == 1) objeto.position = superiorDireito;
         else if (canto == 2) objeto.position = inferiorEsquerdo;
@@ -83,17 +125,18 @@ public class NovoPenalManager : MonoBehaviour
         else if (canto == 4) objeto.position = centroDoGol;
     }
 
-    void ChamarOQuiz()
+    void ChamarOQuizDefinitivo()
     {
-        Debug.Log("Fim dos pênaltis! Abrindo o Quiz...");
-        QuizManager quiz = FindObjectOfType<QuizManager>();
-        if (quiz != null)
+        Debug.Log("Fim absoluto das rodadas. Abrindo painel do Quiz...");
+
+        // CORRIGIDO: Agora ele usa o link direto arrastado, sem chance de errar!
+        if (scriptQuizManager != null)
         {
-            quiz.IniciarQuiz();
+            scriptQuizManager.IniciarQuiz();
         }
         else
         {
-            Debug.LogError("Erro: O script QuizManager não foi encontrado na cena!");
+            Debug.LogError("Erro Grave: Você esqueceu de arrastar o QuizManager para o script do GerenciadorDoJogo no Inspector!");
         }
     }
 }
