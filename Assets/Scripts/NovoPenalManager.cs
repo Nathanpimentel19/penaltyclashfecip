@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using TMPro;
 
 public class NovoPenalManager : MonoBehaviour
 {
@@ -8,18 +9,23 @@ public class NovoPenalManager : MonoBehaviour
     public Transform goleiro;
     public Transform jogador;
 
-    [Header("Link Direto com o Quiz (Arraste Aqui)")]
-    public QuizManager scriptQuizManager; // NOVO: Link físico direto para evitar falhas!
+    [Header("Link Direto com o Quiz")]
+    public QuizManager scriptQuizManager;
+
+    [Header("Textos do Placar (UI)")]
+    public TextMeshProUGUI textoGolsJogador;
+    public TextMeshProUGUI textoGolsMaquina;
 
     [Header("Configurações das Rodadas")]
     public int totalDeChutesPorFase = 5;
     private int chutesFaseChutador = 0;
     private int chutesFaseGoleiro = 0;
 
-    int golsDoJogador = 0;
-    int defesasDoJogador = 0;
-    int golsDaMaquina = 0;
+    // Contadores reais de gols
+    private int golsDoJogador = 0;
+    private int golsDaMaquina = 0;
 
+    // 0 = Jogador Chutando | 1 = Jogador no Gol (Goleiro)
     private int faseDoJogo = 0;
 
     [Header("Coordenadas do Gol")]
@@ -37,6 +43,7 @@ public class NovoPenalManager : MonoBehaviour
         if (bola != null) posicaoInicialBola = bola.position;
         if (goleiro != null) posicaoInicialGoleiro = goleiro.position;
 
+        AtualizarPlacarVisual();
         Debug.Log("[FASE 1 INICIADA] Você é o batedor! Chute no gol.");
     }
 
@@ -45,6 +52,9 @@ public class NovoPenalManager : MonoBehaviour
         if (bola != null) bola.position = posicaoInicialBola;
         if (goleiro != null) goleiro.position = posicaoInicialGoleiro;
 
+        // ==========================================
+        // MODO 1: JOGADOR CHUTANDO (Fase 0)
+        // ==========================================
         if (faseDoJogo == 0)
         {
             if (chutesFaseChutador >= totalDeChutesPorFase) return;
@@ -63,21 +73,26 @@ public class NovoPenalManager : MonoBehaviour
                 int indiceSorteado = Random.Range(0, cantosErrados.Count);
                 cantoGoleiro = cantosErrados[indiceSorteado];
 
-                golsDoJogador++;
+                golsDoJogador++; // SÓ SOMA GOL AQUI!
                 GameData.PontuacaoAtual += 100;
             }
             else
             {
                 cantoGoleiro = cantoClicado;
+                // CORRIGIDO: Se a máquina defendeu, o placar dela NÃO sobe mais! Continua igual.
             }
 
             MoverObjetoParaCanto(goleiro, cantoGoleiro);
+            AtualizarPlacarVisual();
 
             if (chutesFaseChutador >= totalDeChutesPorFase)
             {
                 Invoke("TrocarParaModoLoverGoleiro", 2f);
             }
         }
+        // ==========================================
+        // MODO 2: JOGADOR NO GOL / GOLEIRO (Fase 1)
+        // ==========================================
         else if (faseDoJogo == 1)
         {
             if (chutesFaseGoleiro >= totalDeChutesPorFase) return;
@@ -92,13 +107,15 @@ public class NovoPenalManager : MonoBehaviour
 
             if (cantoChuteMaquina == cantoClicado && dadoGoleiroJogador >= 25)
             {
-                defesasDoJogador++;
+                // CORRIGIDO: Se você defendeu, ganhou +100 pontos globais, mas o placar de Gols não muda!
                 GameData.PontuacaoAtual += 100;
             }
             else
             {
-                golsDaMaquina++;
+                golsDaMaquina++; // GOL DA MÁQUINA! Placar da França sobe.
             }
+
+            AtualizarPlacarVisual();
 
             if (chutesFaseGoleiro >= totalDeChutesPorFase)
             {
@@ -115,6 +132,26 @@ public class NovoPenalManager : MonoBehaviour
         Debug.Log("[FASE 2 INICIADA] Mudou de turno! Agora você é o goleiro.");
     }
 
+    void Update()
+    {
+        // Garante que o placar continue atualizado na tela
+        System.Action placarAction = AtualizarPlacarVisual;
+        placarAction.Invoke();
+    }
+
+    void AtualizarPlacarVisual()
+    {
+        if (textoGolsJogador != null)
+        {
+            textoGolsJogador.text = golsDoJogador.ToString();
+        }
+
+        if (textoGolsMaquina != null)
+        {
+            textoGolsMaquina.text = golsDaMaquina.ToString();
+        }
+    }
+
     void MoverObjetoParaCanto(Transform objeto, int canto)
     {
         if (objeto == null) return;
@@ -127,16 +164,9 @@ public class NovoPenalManager : MonoBehaviour
 
     void ChamarOQuizDefinitivo()
     {
-        Debug.Log("Fim absoluto das rodadas. Abrindo painel do Quiz...");
-
-        // CORRIGIDO: Agora ele usa o link direto arrastado, sem chance de errar!
         if (scriptQuizManager != null)
         {
             scriptQuizManager.IniciarQuiz();
-        }
-        else
-        {
-            Debug.LogError("Erro Grave: Você esqueceu de arrastar o QuizManager para o script do GerenciadorDoJogo no Inspector!");
         }
     }
 }

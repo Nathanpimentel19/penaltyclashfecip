@@ -3889,6 +3889,8 @@ MonoBehaviour:
   goleiro: {fileID: 685048230}
   jogador: {fileID: 1740226495}
   scriptQuizManager: {fileID: 1719279313}
+  textoGolsJogador: {fileID: 114559549}
+  textoGolsMaquina: {fileID: 1119543684}
   totalDeChutesPorFase: 5
   superiorEsquerdo: {x: -5.71, y: 1.78}
   superiorDireito: {x: 5.54, y: 1.45}
@@ -4632,8 +4634,8 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 619394802}
-  - {fileID: 1849762898}
   - {fileID: 685048230}
+  - {fileID: 1849762898}
   - {fileID: 1849210482}
   - {fileID: 1448433651}
   - {fileID: 2092653456}
