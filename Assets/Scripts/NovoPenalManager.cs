@@ -16,16 +16,18 @@ public class NovoPenalManager : MonoBehaviour
     public TextMeshProUGUI textoGolsJogador;
     public TextMeshProUGUI textoGolsMaquina;
 
+    [Header("Configurações de Velocidade")]
+    public float velocidadeDaBola = 35f;
+    public float velocidadeDoGoleiro = 20f;
+    public float velocidadeDoJogador = 14f;
+
     [Header("Configurações das Rodadas")]
     public int totalDeChutesPorFase = 5;
     private int chutesFaseChutador = 0;
     private int chutesFaseGoleiro = 0;
 
-    // Contadores reais de gols
     private int golsDoJogador = 0;
     private int golsDaMaquina = 0;
-
-    // 0 = Jogador Chutando | 1 = Jogador no Gol (Goleiro)
     private int faseDoJogo = 0;
 
     [Header("Coordenadas do Gol")]
@@ -37,30 +39,76 @@ public class NovoPenalManager : MonoBehaviour
 
     private Vector2 posicaoInicialBola;
     private Vector2 posicaoInicialGoleiro;
+    private Vector2 posicaoInicialJogador;
+
+    private Vector2 destinoBola;
+    private Vector2 destinoGoleiro;
+    private Vector2 destinoJogador;
+
+    private bool animacaoAtiva = false;
+    private float rotationalAlvoJogador = 0f; // Nome unificado e corrigido
 
     void Start()
     {
         if (bola != null) posicaoInicialBola = bola.position;
         if (goleiro != null) posicaoInicialGoleiro = goleiro.position;
+        if (jogador != null) posicaoInicialJogador = jogador.position;
 
+        ResetarPosicoesInstantaneo();
         AtualizarPlacarVisual();
-        Debug.Log("[FASE 1 INICIADA] Você é o batedor! Chute no gol.");
     }
 
     public void RealizarChute(int cantoClicado)
     {
-        if (bola != null) bola.position = posicaoInicialBola;
-        if (goleiro != null) goleiro.position = posicaoInicialGoleiro;
+        if (animacaoAtiva) return;
+        StartCoroutine(FluxoSincronizadoChute(cantoClicado));
+    }
 
-        // ==========================================
-        // MODO 1: JOGADOR CHUTANDO (Fase 0)
-        // ==========================================
+    System.Collections.IEnumerator FluxoSincronizadoChute(int cantoClicado)
+    {
+        animacaoAtiva = true;
+
+        // ----------------------------------------------------
+        // PASSO 1: O JOGADOR CORRE ATÉ A BOLA
+        // ----------------------------------------------------
+        if (faseDoJogo == 0)
+        {
+            destinoJogador = posicaoInicialBola;
+
+            while (jogador != null && Vector2.Distance(jogador.position, destinoJogador) > 0.4f)
+            {
+                yield return null;
+            }
+
+            // ANIMAÇÃO DA PERNA: Ajusta a rotação para chicotear o corpo para frente no impacto!
+            rotationalAlvoJogador = -35f;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        // ----------------------------------------------------
+        // PASSO 2: IMPACTO IMEDIATO (BOLA E GOLEIRO REAGEM)
+        // ----------------------------------------------------
+        chutesRealizadosMatematica(cantoClicado);
+
+        // Espera o tempo do chute terminar
+        yield return new WaitForSeconds(1.5f);
+
+        // ----------------------------------------------------
+        // PASSO 3: RESET VISUAL DA PARTIDA E FIM DE TURNO
+        // ----------------------------------------------------
+        ChecarFimDeTurno();
+        ResetarPosicoesInstantaneo();
+        animacaoAtiva = false;
+    }
+
+    void chutesRealizadosMatematica(int cantoClicado)
+    {
         if (faseDoJogo == 0)
         {
             if (chutesFaseChutador >= totalDeChutesPorFase) return;
             chutesFaseChutador++;
 
-            MoverObjetoParaCanto(bola, cantoClicado);
+            destinoBola = ObterCoordenadaDoCanto(cantoClicado);
 
             int dadoBola = Random.Range(0, 101);
             int dadoGoleiro = Random.Range(0, 51);
@@ -70,103 +118,104 @@ public class NovoPenalManager : MonoBehaviour
             {
                 List<int> cantosErrados = new List<int> { 0, 1, 2, 3, 4 };
                 cantosErrados.Remove(cantoClicado);
-                int indiceSorteado = Random.Range(0, cantosErrados.Count);
-                cantoGoleiro = cantosErrados[indiceSorteado];
-
-                golsDoJogador++; // SÓ SOMA GOL AQUI!
+                cantoGoleiro = cantosErrados[Random.Range(0, cantosErrados.Count)];
+                golsDoJogador++;
                 GameData.PontuacaoAtual += 100;
             }
             else
             {
                 cantoGoleiro = cantoClicado;
-                // CORRIGIDO: Se a máquina defendeu, o placar dela NÃO sobe mais! Continua igual.
             }
 
-            MoverObjetoParaCanto(goleiro, cantoGoleiro);
-            AtualizarPlacarVisual();
-
-            if (chutesFaseChutador >= totalDeChutesPorFase)
-            {
-                Invoke("TrocarParaModoLoverGoleiro", 2f);
-            }
+            destinoGoleiro = ObterCoordenadaDoCanto(cantoGoleiro);
         }
-        // ==========================================
-        // MODO 2: JOGADOR NO GOL / GOLEIRO (Fase 1)
-        // ==========================================
         else if (faseDoJogo == 1)
         {
             if (chutesFaseGoleiro >= totalDeChutesPorFase) return;
             chutesFaseGoleiro++;
 
             int cantoChuteMaquina = Random.Range(0, 5);
-            MoverObjetoParaCanto(bola, cantoChuteMaquina);
-            MoverObjetoParaCanto(goleiro, cantoClicado);
+            destinoBola = ObterCoordenadaDoCanto(cantoChuteMaquina);
+            destinoGoleiro = ObterCoordenadaDoCanto(cantoClicado);
 
             int dadoMaquina = Random.Range(0, 101);
             int dadoGoleiroJogador = Random.Range(0, 51);
 
             if (cantoChuteMaquina == cantoClicado && dadoGoleiroJogador >= 25)
             {
-                // CORRIGIDO: Se você defendeu, ganhou +100 pontos globais, mas o placar de Gols não muda!
                 GameData.PontuacaoAtual += 100;
             }
             else
             {
-                golsDaMaquina++; // GOL DA MÁQUINA! Placar da França sobe.
-            }
-
-            AtualizarPlacarVisual();
-
-            if (chutesFaseGoleiro >= totalDeChutesPorFase)
-            {
-                Invoke("ChamarOQuizDefinitivo", 2f);
+                golsDaMaquina++;
             }
         }
-    }
 
-    void TrocarParaModoLoverGoleiro()
-    {
-        faseDoJogo = 1;
-        if (bola != null) bola.position = posicaoInicialBola;
-        if (goleiro != null) goleiro.position = posicaoInicialGoleiro;
-        Debug.Log("[FASE 2 INICIADA] Mudou de turno! Agora você é o goleiro.");
+        AtualizarPlacarVisual();
     }
 
     void Update()
     {
-        // Garante que o placar continue atualizado na tela
-        System.Action placarAction = AtualizarPlacarVisual;
-        placarAction.Invoke();
+        if (faseDoJogo == 0 && jogador != null)
+        {
+            if ((Vector2)jogador.position != destinoJogador)
+            {
+                jogador.position = Vector3.MoveTowards(jogador.position, destinoJogador, velocidadeDoJogador * Time.deltaTime);
+            }
+
+            // CORRIGIDO: Rotação unificada e sem erros de C#
+            Quaternion rotationAtual = jogador.rotation;
+            Quaternion rotationDestino = Quaternion.Euler(0, 0, rotationalAlvoJogador);
+            jogador.rotation = Quaternion.RotateTowards(rotationAtual, rotationDestino, 300f * Time.deltaTime);
+        }
+
+        if (bola != null && (Vector2)bola.position != destinoBola)
+        {
+            bola.position = Vector3.MoveTowards(bola.position, destinoBola, velocidadeDaBola * Time.deltaTime);
+            bola.Rotate(Vector3.forward * -600f * Time.deltaTime);
+        }
+
+        if (goleiro != null && (Vector2)goleiro.position != destinoGoleiro)
+        {
+            goleiro.position = Vector3.MoveTowards(goleiro.position, destinoGoleiro, velocidadeDoGoleiro * Time.deltaTime);
+        }
     }
 
+    void ChecarFimDeTurno()
+    {
+        if (faseDoJogo == 0 && chutesFaseChutador >= totalDeChutesPorFase)
+        {
+            faseDoJogo = 1;
+            Debug.Log("[FASE 2 INICIADA] Agora você é o goleiro!");
+        }
+        else if (faseDoJogo == 1 && chutesFaseGoleiro >= totalDeChutesPorFase)
+        {
+            if (scriptQuizManager != null) scriptQuizManager.IniciarQuiz();
+        }
+    }
+
+    void ResetarPosicoesInstantaneo()
+    {
+        rotationalAlvoJogador = 0f;
+        if (bola != null) { bola.position = posicaoInicialBola; destinoBola = posicaoInicialBola; bola.rotation = Quaternion.identity; }
+        if (goleiro != null) { goleiro.position = posicaoInicialGoleiro; destinoGoleiro = posicaoInicialGoleiro; }
+        if (jogador != null) { jogador.position = posicaoInicialJogador; destinoJogador = posicaoInicialJogador; jogador.rotation = Quaternion.identity; }
+    }
+
+    Vector2 ObterCoordenadaDoCanto(int canto)
+    {
+        if (canto == 0) return superiorEsquerdo;
+        if (canto == 1) return superiorDireito;
+        if (canto == 2) return inferiorEsquerdo;
+        if (canto == 3) return InferiorDireito;
+        return centroDoGol;
+    }
+
+    void UpdateTextoDePontos() { AtualizarPlacarVisual(); }
+    void SystemAction() { AtualizarPlacarVisual(); }
     void AtualizarPlacarVisual()
     {
-        if (textoGolsJogador != null)
-        {
-            textoGolsJogador.text = golsDoJogador.ToString();
-        }
-
-        if (textoGolsMaquina != null)
-        {
-            textoGolsMaquina.text = golsDaMaquina.ToString();
-        }
-    }
-
-    void MoverObjetoParaCanto(Transform objeto, int canto)
-    {
-        if (objeto == null) return;
-        if (canto == 0) objeto.position = superiorEsquerdo;
-        else if (canto == 1) objeto.position = superiorDireito;
-        else if (canto == 2) objeto.position = inferiorEsquerdo;
-        else if (canto == 3) objeto.position = InferiorDireito;
-        else if (canto == 4) objeto.position = centroDoGol;
-    }
-
-    void ChamarOQuizDefinitivo()
-    {
-        if (scriptQuizManager != null)
-        {
-            scriptQuizManager.IniciarQuiz();
-        }
+        if (textoGolsJogador != null) textoGolsJogador.text = golsDoJogador.ToString();
+        if (textoGolsMaquina != null) textoGolsMaquina.text = golsDaMaquina.ToString();
     }
 }
