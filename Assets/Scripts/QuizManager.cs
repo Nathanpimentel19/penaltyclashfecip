@@ -10,6 +10,7 @@ public class QuizManager : MonoBehaviour
     public TextMeshProUGUI textoPergunta;
     public TextMeshProUGUI[] textoAlternativas;
     public TextMeshProUGUI textoPontuacaoVisual;
+    public GameObject botaoJogarDeNovo; // Integrado para permitir o reinício da partida!
 
     private Dictionary<int, string> historicoCopas = new Dictionary<int, string>()
     {
@@ -32,12 +33,14 @@ public class QuizManager : MonoBehaviour
     void Start()
     {
         if (painelDoQuiz != null) painelDoQuiz.SetActive(false);
+        if (botaoJogarDeNovo != null) botaoJogarDeNovo.SetActive(false);
         AtualizarTextoDePontos();
     }
 
     public void IniciarQuiz()
     {
         if (painelDoQuiz != null) painelDoQuiz.SetActive(true);
+        if (botaoJogarDeNovo != null) botaoJogarDeNovo.SetActive(false);
         AtualizarTextoDePontos();
         GerarPerguntaUnica();
     }
@@ -82,6 +85,7 @@ public class QuizManager : MonoBehaviour
                     int indiceResposta = i;
                     botaoPai.onClick.RemoveAllListeners();
                     botaoPai.onClick.AddListener(() => Responder(indiceResposta));
+                    botaoPai.gameObject.SetActive(true); // Garante que os botões voltem acesos
                 }
             }
         }
@@ -118,6 +122,17 @@ public class QuizManager : MonoBehaviour
                 if (botaoPai != null) botaoPai.gameObject.SetActive(false);
             }
         }
+
+        if (botaoJogarDeNovo != null)
+        {
+            botaoJogarDeNovo.SetActive(true); // Ativa o botão de restart ao final!
+        }
+    }
+
+    public void ReiniciarPartidaCompleta()
+    {
+        GameData.PontuacaoAtual = 0;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 
     void Update()

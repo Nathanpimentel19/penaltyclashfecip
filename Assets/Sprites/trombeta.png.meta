@@ -1,10 +1,19 @@
 fileFormatVersion: 2
-guid: 2c5164b951dfd084f97988001e84daa0
+guid: 82d53167c9114844cb641d4e74a6775b
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8799996426219782088
-    second: ChatGPT Image 31 de ago. de 2026, 23_03_41_0
+      213: -4839797876997546145
+    second: trombeta_0
+  - first:
+      213: -3304487127309114450
+    second: trombeta_1
+  - first:
+      213: -3407025166490489769
+    second: trombeta_2
+  - first:
+      213: 4434914668314408377
+    second: trombeta_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -96,30 +105,17 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ChatGPT Image 31 de ago. de 2026, 23_03_41_0
+      name: trombeta_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1794
-        height: 877
+        x: 50
+        y: 15
+        width: 407
+        height: 363
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +124,74 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 830867eefd120e580800000000000000
-      internalID: -8799996426219782088
+      spriteID: f5f1fd4297595dcb0800000000000000
+      internalID: -4839797876997546145
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trombeta_1
+      rect:
+        serializedVersion: 2
+        x: 445
+        y: 296
+        width: 90
+        height: 103
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea3a3e3377a1422d0800000000000000
+      internalID: -3304487127309114450
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trombeta_2
+      rect:
+        serializedVersion: 2
+        x: 479
+        y: 244
+        width: 115
+        height: 66
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 75ca48a89a0d7b0d0800000000000000
+      internalID: -3407025166490489769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: trombeta_3
+      rect:
+        serializedVersion: 2
+        x: 473
+        y: 142
+        width: 104
+        height: 85
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9b5bc06c46bfb8d30800000000000000
+      internalID: 4434914668314408377
       vertices: []
       indices: 
       edges: []
@@ -148,7 +210,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      ChatGPT Image 31 de ago. de 2026, 23_03_41_0: -8799996426219782088
+      trombeta_0: -4839797876997546145
+      trombeta_1: -3304487127309114450
+      trombeta_2: -3407025166490489769
+      trombeta_3: 4434914668314408377
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

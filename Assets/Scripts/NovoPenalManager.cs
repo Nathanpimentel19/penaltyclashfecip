@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.UI;
 
 public class NovoPenalManager : MonoBehaviour
 {
@@ -15,6 +16,10 @@ public class NovoPenalManager : MonoBehaviour
     [Header("Textos do Placar (UI)")]
     public TextMeshProUGUI textoGolsJogador;
     public TextMeshProUGUI textoGolsMaquina;
+
+    [Header("Texto Exclusivo de Gol (Arraste Aqui)")]
+    public GameObject textoGritoDeGol;
+    public float velocidadeDoLetreiro = 1500f; // Velocidade do deslize na tela
 
     [Header("Configurações de Velocidade")]
     public float velocidadeDaBola = 35f;
@@ -46,16 +51,38 @@ public class NovoPenalManager : MonoBehaviour
     private Vector2 destinoJogador;
 
     private bool animacaoAtiva = false;
-    private float rotationalAlvoJogador = 0f; // Nome unificado e corrigido
+    private float funcaoQuedaGoleiro = 0f;
+
+    private Animator jogadorAnimator;
+
+    // Variáveis internas para a animação de deslizamento horizontal
+    private RectTransform rectLetreiroGol;
+    private float xAlvoLetreiro = 0f;
+    private bool moverLetreiroHorizontal = false;
 
     void Start()
     {
         if (bola != null) posicaoInicialBola = bola.position;
         if (goleiro != null) posicaoInicialGoleiro = goleiro.position;
-        if (jogador != null) posicaoInicialJogador = jogador.position;
+        if (jogador != null)
+        {
+            posicaoInicialJogador = jogador.position;
+            jogadorAnimator = MathAnimator(jogador);
+        }
+
+        if (textoGritoDeGol != null)
+        {
+            rectLetreiroGol = textoGritoDeGol.GetComponent<RectTransform>();
+            textoGritoDeGol.SetActive(false);
+        }
 
         ResetarPosicoesInstantaneo();
         AtualizarPlacarVisual();
+    }
+
+    Animator MathAnimator(Transform target)
+    {
+        return target.GetComponent<Animator>();
     }
 
     public void RealizarChute(int cantoClicado)
@@ -68,77 +95,98 @@ public class NovoPenalManager : MonoBehaviour
     {
         animacaoAtiva = true;
 
-        // ----------------------------------------------------
-        // PASSO 1: O JOGADOR CORRE ATÉ A BOLA
-        // ----------------------------------------------------
         if (faseDoJogo == 0)
         {
             destinoJogador = posicaoInicialBola;
+            if (jogadorAnimator != null) jogadorAnimator.Play("Jogador_Parado");
 
             while (jogador != null && Vector2.Distance(jogador.position, destinoJogador) > 0.4f)
             {
                 yield return null;
             }
 
-            // ANIMAÇÃO DA PERNA: Ajusta a rotação para chicotear o corpo para frente no impacto!
-            rotationalAlvoJogador = -35f;
-            yield return new WaitForSeconds(0.1f);
+            if (jogadorAnimator != null) jogadorAnimator.Play("Jogador_Chutando");
+            yield return new WaitForSeconds(0.15f);
         }
 
-        // ----------------------------------------------------
-        // PASSO 2: IMPACTO IMEDIATO (BOLA E GOLEIRO REAGEM)
-        // ----------------------------------------------------
-        chutesRealizadosMatematica(cantoClicado);
+        bool foiGol = ChutesRealizadosMatematica(cantoClicado);
 
-        // Espera o tempo do chute terminar
-        yield return new WaitForSeconds(1.5f);
+        // DISPARADOR DO DESLIZE DA DIREITA PARA A ESQUERDA
+        if (foiGol && rectLetreiroGol != null)
+        {
+            // Coloca o texto lá na direita bem longe (fora da tela)
+            rectLetreiroGol.anchoredPosition = new Vector2(1200f, 0f);
+            textoGritoDeGol.SetActive(true);
 
-        // ----------------------------------------------------
-        // PASSO 3: RESET VISUAL DA PARTIDA E FIM DE TURNO
-        // ----------------------------------------------------
+            // Define o primeiro alvo: o meio exato da tela (0)
+            xAlvoLetreiro = 0f;
+            moverLetreiroHorizontal = true;
+
+            // Espera 1.2 segundos com ele parado no meio antes de mandar sair pela esquerda
+            Invoke(nameof(DeslizarParaForaDaTela), 1.2f);
+        }
+
+        yield return new WaitForSeconds(1.8f);
+
         ChecarFimDeTurno();
         ResetarPosicoesInstantaneo();
         animacaoAtiva = false;
     }
 
-    void chutesRealizadosMatematica(int cantoClicado)
+    void DeslizarParaForaDaTela()
     {
+        // Define o segundo alvo: voar tudo para a esquerda (-1200) até sumir
+        xAlvoLetreiro = -1200f;
+        Invoke(nameof(EsconderTextoDeGol), 0.4f);
+    }
+
+    void EsconderTextoDeGol()
+    {
+        moverLetreiroHorizontal = false;
+        if (textoGritoDeGol != null) textoGritoDeGol.SetActive(false);
+    }
+
+    bool ChutesRealizadosMatematica(int cantoClicado)
+    {
+        bool marcouGol = false;
+        int cantoGoleiroFinal = cantoClicado;
+
         if (faseDoJogo == 0)
         {
-            if (chutesFaseChutador >= totalDeChutesPorFase) return;
+            if (chutesFaseChutador >= totalDeChutesPorFase) return false;
             chutesFaseChutador++;
 
             destinoBola = ObterCoordenadaDoCanto(cantoClicado);
 
             int dadoBola = Random.Range(0, 101);
             int dadoGoleiro = Random.Range(0, 51);
-            int cantoGoleiro;
 
             if (dadoBola > dadoGoleiro)
             {
                 List<int> cantosErrados = new List<int> { 0, 1, 2, 3, 4 };
                 cantosErrados.Remove(cantoClicado);
-                cantoGoleiro = cantosErrados[Random.Range(0, cantosErrados.Count)];
+                cantoGoleiroFinal = cantosErrados[Random.Range(0, cantosErrados.Count)];
                 golsDoJogador++;
                 GameData.PontuacaoAtual += 100;
+                marcouGol = true;
             }
             else
             {
-                cantoGoleiro = cantoClicado;
+                cantoGoleiroFinal = cantoClicado;
             }
 
-            destinoGoleiro = ObterCoordenadaDoCanto(cantoGoleiro);
+            destinoGoleiro = ObterCoordenadaDoCanto(cantoGoleiroFinal);
         }
         else if (faseDoJogo == 1)
         {
-            if (chutesFaseGoleiro >= totalDeChutesPorFase) return;
+            if (chutesFaseGoleiro >= totalDeChutesPorFase) return false;
             chutesFaseGoleiro++;
 
             int cantoChuteMaquina = Random.Range(0, 5);
             destinoBola = ObterCoordenadaDoCanto(cantoChuteMaquina);
             destinoGoleiro = ObterCoordenadaDoCanto(cantoClicado);
+            cantoGoleiroFinal = cantoClicado;
 
-            int dadoMaquina = Random.Range(0, 101);
             int dadoGoleiroJogador = Random.Range(0, 51);
 
             if (cantoChuteMaquina == cantoClicado && dadoGoleiroJogador >= 25)
@@ -148,25 +196,23 @@ public class NovoPenalManager : MonoBehaviour
             else
             {
                 golsDaMaquina++;
+                marcouGol = true;
             }
         }
 
+        if (cantoGoleiroFinal == 0 || cantoGoleiroFinal == 2) funcaoQuedaGoleiro = 65f;
+        else if (cantoGoleiroFinal == 1 || cantoGoleiroFinal == 3) funcaoQuedaGoleiro = -65f;
+        else funcaoQuedaGoleiro = 0f;
+
         AtualizarPlacarVisual();
+        return marcouGol;
     }
 
     void Update()
     {
-        if (faseDoJogo == 0 && jogador != null)
+        if (faseDoJogo == 0 && jogador != null && (Vector2)jogador.position != destinoJogador)
         {
-            if ((Vector2)jogador.position != destinoJogador)
-            {
-                jogador.position = Vector3.MoveTowards(jogador.position, destinoJogador, velocidadeDoJogador * Time.deltaTime);
-            }
-
-            // CORRIGIDO: Rotação unificada e sem erros de C#
-            Quaternion rotationAtual = jogador.rotation;
-            Quaternion rotationDestino = Quaternion.Euler(0, 0, rotationalAlvoJogador);
-            jogador.rotation = Quaternion.RotateTowards(rotationAtual, rotationDestino, 300f * Time.deltaTime);
+            jogador.position = Vector3.MoveTowards(jogador.position, destinoJogador, velocidadeDoJogador * Time.deltaTime);
         }
 
         if (bola != null && (Vector2)bola.position != destinoBola)
@@ -175,9 +221,23 @@ public class NovoPenalManager : MonoBehaviour
             bola.Rotate(Vector3.forward * -600f * Time.deltaTime);
         }
 
-        if (goleiro != null && (Vector2)goleiro.position != destinoGoleiro)
+        if (goleiro != null)
         {
-            goleiro.position = Vector3.MoveTowards(goleiro.position, destinoGoleiro, velocidadeDoGoleiro * Time.deltaTime);
+            if ((Vector2)goleiro.position != destinoGoleiro)
+            {
+                goleiro.position = Vector3.MoveTowards(goleiro.position, destinoGoleiro, velocidadeDoGoleiro * Time.deltaTime);
+            }
+            Quaternion rotAtual = goleiro.rotation;
+            Quaternion rotDestino = Quaternion.Euler(0, 0, funcaoQuedaGoleiro);
+            goleiro.rotation = Quaternion.RotateTowards(rotAtual, rotDestino, 350f * Time.deltaTime);
+        }
+
+        // MOVIMENTAÇÃO TRAJETO HORIZONTAL DO GOL (Direta para a Esquerda)
+        if (moverLetreiroHorizontal && rectLetreiroGol != null)
+        {
+            Vector2 pos = rectLetreiroGol.anchoredPosition;
+            pos.x = Mathf.MoveTowards(pos.x, xAlvoLetreiro, velocidadeDoLetreiro * Time.deltaTime);
+            rectLetreiroGol.anchoredPosition = pos;
         }
     }
 
@@ -196,10 +256,11 @@ public class NovoPenalManager : MonoBehaviour
 
     void ResetarPosicoesInstantaneo()
     {
-        rotationalAlvoJogador = 0f;
+        funcaoQuedaGoleiro = 0f;
+        if (jogadorAnimator != null) jogadorAnimator.Play("Jogador_Parado");
         if (bola != null) { bola.position = posicaoInicialBola; destinoBola = posicaoInicialBola; bola.rotation = Quaternion.identity; }
-        if (goleiro != null) { goleiro.position = posicaoInicialGoleiro; destinoGoleiro = posicaoInicialGoleiro; }
-        if (jogador != null) { jogador.position = posicaoInicialJogador; destinoJogador = posicaoInicialJogador; jogador.rotation = Quaternion.identity; }
+        if (goleiro != null) { goleiro.position = posicaoInicialGoleiro; destinoGoleiro = posicaoInicialGoleiro; goleiro.rotation = Quaternion.identity; }
+        if (jogador != null) { jogador.position = posicaoInicialJogador; destinoJogador = posicaoInicialJogador; }
     }
 
     Vector2 ObterCoordenadaDoCanto(int canto)
@@ -211,8 +272,6 @@ public class NovoPenalManager : MonoBehaviour
         return centroDoGol;
     }
 
-    void UpdateTextoDePontos() { AtualizarPlacarVisual(); }
-    void SystemAction() { AtualizarPlacarVisual(); }
     void AtualizarPlacarVisual()
     {
         if (textoGolsJogador != null) textoGolsJogador.text = golsDoJogador.ToString();
