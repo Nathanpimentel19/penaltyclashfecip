@@ -19,7 +19,10 @@ public class NovoPenalManager : MonoBehaviour
 
     [Header("Texto Exclusivo de Gol (Arraste Aqui)")]
     public GameObject textoGritoDeGol;
-    public float velocidadeDoLetreiro = 1500f; // Velocidade do deslize na tela
+    public float velocidadeDoLetreiro = 1500f;
+
+    [Header("NOVO: Sistema de Confetes (Arraste Aqui)")]
+    public ParticleSystem confetesGol;
 
     [Header("Configurações de Velocidade")]
     public float velocidadeDaBola = 35f;
@@ -55,7 +58,6 @@ public class NovoPenalManager : MonoBehaviour
 
     private Animator jogadorAnimator;
 
-    // Variáveis internas para a animação de deslizamento horizontal
     private RectTransform rectLetreiroGol;
     private float xAlvoLetreiro = 0f;
     private bool moverLetreiroHorizontal = false;
@@ -75,6 +77,9 @@ public class NovoPenalManager : MonoBehaviour
             rectLetreiroGol = textoGritoDeGol.GetComponent<RectTransform>();
             textoGritoDeGol.SetActive(false);
         }
+
+        // Garante que os confetes comecem parados
+        if (confetesGol != null) confetesGol.Stop();
 
         ResetarPosicoesInstantaneo();
         AtualizarPlacarVisual();
@@ -111,19 +116,19 @@ public class NovoPenalManager : MonoBehaviour
 
         bool foiGol = ChutesRealizadosMatematica(cantoClicado);
 
-        // DISPARADOR DO DESLIZE DA DIREITA PARA A ESQUERDA
-        if (foiGol && rectLetreiroGol != null)
+        if (foiGol)
         {
-            // Coloca o texto lá na direita bem longe (fora da tela)
-            rectLetreiroGol.anchoredPosition = new Vector2(1200f, 0f);
-            textoGritoDeGol.SetActive(true);
+            // DISPARA OS CONFETES VISUAIS!
+            if (confetesGol != null) confetesGol.Play();
 
-            // Define o primeiro alvo: o meio exato da tela (0)
-            xAlvoLetreiro = 0f;
-            moverLetreiroHorizontal = true;
-
-            // Espera 1.2 segundos com ele parado no meio antes de mandar sair pela esquerda
-            Invoke(nameof(DeslizarParaForaDaTela), 1.2f);
+            if (rectLetreiroGol != null)
+            {
+                rectLetreiroGol.anchoredPosition = new Vector2(1200f, 0f);
+                textoGritoDeGol.SetActive(true);
+                xAlvoLetreiro = 0f;
+                moverLetreiroHorizontal = true;
+                Invoke(nameof(DeslizarParaForaDaTela), 1.2f);
+            }
         }
 
         yield return new WaitForSeconds(1.8f);
@@ -135,7 +140,6 @@ public class NovoPenalManager : MonoBehaviour
 
     void DeslizarParaForaDaTela()
     {
-        // Define o segundo alvo: voar tudo para a esquerda (-1200) até sumir
         xAlvoLetreiro = -1200f;
         Invoke(nameof(EsconderTextoDeGol), 0.4f);
     }
@@ -232,7 +236,6 @@ public class NovoPenalManager : MonoBehaviour
             goleiro.rotation = Quaternion.RotateTowards(rotAtual, rotDestino, 350f * Time.deltaTime);
         }
 
-        // MOVIMENTAÇÃO TRAJETO HORIZONTAL DO GOL (Direta para a Esquerda)
         if (moverLetreiroHorizontal && rectLetreiroGol != null)
         {
             Vector2 pos = rectLetreiroGol.anchoredPosition;
