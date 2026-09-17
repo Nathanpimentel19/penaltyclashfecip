@@ -11,6 +11,7 @@ public class QuizManager : MonoBehaviour
     public TextMeshProUGUI[] textoAlternativas;
     public TextMeshProUGUI textoPontuacaoVisual;
     public GameObject botaoJogarDeNovo; // Integrado para permitir o reinício da partida!
+    public GameObject botaoVoltar;
 
     private Dictionary<int, string> historicoCopas = new Dictionary<int, string>()
     {
@@ -126,6 +127,10 @@ public class QuizManager : MonoBehaviour
         if (botaoJogarDeNovo != null)
         {
             botaoJogarDeNovo.SetActive(true); // Ativa o botão de restart ao final!
+        }
+        if (botaoVoltar != null)
+        {
+            botaoVoltar.SetActive(true);
         }
     }
 
