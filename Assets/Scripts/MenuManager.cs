@@ -5,7 +5,7 @@ public class MenuManager : MonoBehaviour
 {
     public void Jogar()
     {
-        SceneManager.LoadScene("EscolhaDePaís");
+        SceneManager.LoadScene("EscolhaNome");
     }
 
     public void Sair()
