@@ -88,4 +88,10 @@ public class EscolhaDePaisManager : MonoBehaviour
         // Carrega a sua cena do pênalti
         SceneManager.LoadScene("JogoPenaltis");
     }
+
+    public void Voltar()
+    {
+        // Volta para a cena anterior ou menu principal
+        SceneManager.LoadScene("Menu");
+    }
 }
