@@ -24,6 +24,10 @@ public class NovoPenalManager : MonoBehaviour
     [Header("NOVO: Sistema de Confetes (Arraste Aqui)")]
     public ParticleSystem confetesGol;
 
+    [Header("Áudios")]
+    public AudioSource audioSource;
+    public AudioSource audioTorcida;
+
     [Header("Configurações de Velocidade")]
     public float velocidadeDaBola = 35f;
     public float velocidadeDoGoleiro = 20f;
@@ -64,6 +68,10 @@ public class NovoPenalManager : MonoBehaviour
 
     void Start()
     {
+        if (audioTorcida != null)
+        {
+            audioTorcida.Play();
+        }
         if (bola != null) posicaoInicialBola = bola.position;
         if (goleiro != null) posicaoInicialGoleiro = goleiro.position;
         if (jogador != null)
@@ -111,6 +119,12 @@ public class NovoPenalManager : MonoBehaviour
             }
 
             if (jogadorAnimator != null) jogadorAnimator.Play("Jogador_Chutando");
+
+            if (audioSource != null)
+            {
+                audioSource.Play();
+            }
+
             yield return new WaitForSeconds(0.15f);
         }
 
@@ -183,6 +197,10 @@ public class NovoPenalManager : MonoBehaviour
         }
         else if (faseDoJogo == 1)
         {
+            if (audioSource != null)
+            {
+                audioSource.Play();
+            }
             if (chutesFaseGoleiro >= totalDeChutesPorFase) return false;
             chutesFaseGoleiro++;
 
@@ -253,6 +271,11 @@ public class NovoPenalManager : MonoBehaviour
         }
         else if (faseDoJogo == 1 && chutesFaseGoleiro >= totalDeChutesPorFase)
         {
+            if (audioTorcida != null)
+            {
+                audioTorcida.Stop();
+            }
+
             if (scriptQuizManager != null) scriptQuizManager.IniciarQuiz();
         }
     }
