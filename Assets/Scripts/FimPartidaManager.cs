@@ -5,7 +5,7 @@ public class FimPartidaManager : MonoBehaviour
 {
     public void JogarNovamente()
     {
-        SceneManager.LoadScene("JogoPenaltis");
+        SceneManager.LoadScene("EscolhaDePaís");
     }
 
     public void Voltar()
