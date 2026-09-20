@@ -3,6 +3,11 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
+    public void BotaoVerPlacar()
+    {
+        SceneManager.LoadScene("CenaPlacar");
+    }
+
     public void Jogar()
     {
         SceneManager.LoadScene("EscolhaNome");

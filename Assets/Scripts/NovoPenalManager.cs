@@ -86,7 +86,6 @@ public class NovoPenalManager : MonoBehaviour
             textoGritoDeGol.SetActive(false);
         }
 
-        // Garante que os confetes comecem parados
         if (confetesGol != null) confetesGol.Stop();
 
         ResetarPosicoesInstantaneo();
@@ -101,13 +100,13 @@ public class NovoPenalManager : MonoBehaviour
     public void RealizarChute(int cantoClicado)
     {
         if (animacaoAtiva) return;
+        animacaoAtiva = true; // Trava o clique rápido imediatamente!
+
         StartCoroutine(FluxoSincronizadoChute(cantoClicado));
     }
 
     System.Collections.IEnumerator FluxoSincronizadoChute(int cantoClicado)
     {
-        animacaoAtiva = true;
-
         if (faseDoJogo == 0)
         {
             destinoJogador = posicaoInicialBola;
@@ -132,7 +131,6 @@ public class NovoPenalManager : MonoBehaviour
 
         if (foiGol)
         {
-            // DISPARA OS CONFETES VISUAIS!
             if (confetesGol != null) confetesGol.Play();
 
             if (rectLetreiroGol != null)
@@ -185,12 +183,16 @@ public class NovoPenalManager : MonoBehaviour
                 cantosErrados.Remove(cantoClicado);
                 cantoGoleiroFinal = cantosErrados[Random.Range(0, cantosErrados.Count)];
                 golsDoJogador++;
-                GameData.PontuacaoAtual += 100;
+
+                GameData.GolsAcertos++;
+                GameData.PontuacaoAtual += 1000;
                 marcouGol = true;
             }
             else
             {
                 cantoGoleiroFinal = cantoClicado;
+                GameData.GolsFora++;
+                GameData.PontuacaoAtual = Mathf.Max(0, GameData.PontuacaoAtual - 200);
             }
 
             destinoGoleiro = ObterCoordenadaDoCanto(cantoGoleiroFinal);
@@ -213,12 +215,15 @@ public class NovoPenalManager : MonoBehaviour
 
             if (cantoChuteMaquina == cantoClicado && dadoGoleiroJogador >= 25)
             {
-                GameData.PontuacaoAtual += 100;
+                GameData.DefesasAcertas++;
+                GameData.PontuacaoAtual += 1000;
             }
             else
             {
                 golsDaMaquina++;
                 marcouGol = true;
+                GameData.DefesasErradas++;
+                GameData.PontuacaoAtual = Mathf.Max(0, GameData.PontuacaoAtual - 200);
             }
         }
 
@@ -298,9 +303,5 @@ public class NovoPenalManager : MonoBehaviour
         return centroDoGol;
     }
 
-    void AtualizarPlacarVisual()
-    {
-        if (textoGolsJogador != null) textoGolsJogador.text = golsDoJogador.ToString();
-        if (textoGolsMaquina != null) textoGolsMaquina.text = golsDaMaquina.ToString();
-    }
+    void AtualizarPlacarVisual() { if (textoGolsJogador != null) textoGolsJogador.text = golsDoJogador.ToString(); if (textoGolsMaquina != null) textoGolsMaquina.text = golsDaMaquina.ToString(); }
 }

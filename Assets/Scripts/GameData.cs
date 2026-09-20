@@ -12,4 +12,10 @@ public static class GameData
     // Dados do Time 2 (Direita)
     public static Sprite BandeiraTime2;
     public static string SiglaTime2;
+
+    // Estatísticas dos Pênaltis para o Quiz ler depois
+    public static int GolsAcertos = 0;
+    public static int GolsFora = 0;
+    public static int DefesasAcertas = 0;
+    public static int DefesasErradas = 0;
 }
