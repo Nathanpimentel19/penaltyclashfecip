@@ -5,7 +5,7 @@ public class MenuManager : MonoBehaviour
 {
     public void BotaoVerPlacar()
     {
-        SceneManager.LoadScene("CenaPlacar");
+        SceneManager.LoadScene("Ranking");
     }
 
     public void Jogar()
