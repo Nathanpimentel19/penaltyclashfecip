@@ -21,7 +21,7 @@ public class NovoPenalManager : MonoBehaviour
     public GameObject textoGritoDeGol;
     public float velocidadeDoLetreiro = 1500f;
 
-    [Header("NOVO: Sistema de Confetes (Arraste Aqui)")]
+    [Header("Sistema de Confetes (Arraste Aqui)")]
     public ParticleSystem confetesGol;
 
     [Header("Áudios")]
@@ -61,6 +61,7 @@ public class NovoPenalManager : MonoBehaviour
     private float funcaoQuedaGoleiro = 0f;
 
     private Animator jogadorAnimator;
+    private Animator goleiroAnimator; // NOVO: Referência para desligar/ligar o Animator do goleiro
 
     private RectTransform rectLetreiroGol;
     private float xAlvoLetreiro = 0f;
@@ -73,7 +74,11 @@ public class NovoPenalManager : MonoBehaviour
             audioTorcida.Play();
         }
         if (bola != null) posicaoInicialBola = bola.position;
-        if (goleiro != null) posicaoInicialGoleiro = goleiro.position;
+        if (goleiro != null)
+        {
+            posicaoInicialGoleiro = goleiro.position;
+            goleiroAnimator = goleiro.GetComponent<Animator>(); // Captura o animator do goleiro
+        }
         if (jogador != null)
         {
             posicaoInicialJogador = jogador.position;
@@ -100,13 +105,16 @@ public class NovoPenalManager : MonoBehaviour
     public void RealizarChute(int cantoClicado)
     {
         if (animacaoAtiva) return;
-        animacaoAtiva = true; // Trava o clique rápido imediatamente!
+        animacaoAtiva = true; // Bloqueia cliques repetidos imediatamente
 
         StartCoroutine(FluxoSincronizadoChute(cantoClicado));
     }
 
     System.Collections.IEnumerator FluxoSincronizadoChute(int cantoClicado)
     {
+        // =========================================================================
+        // FASE 1: VOCÊ É O CHUTADOR
+        // =========================================================================
         if (faseDoJogo == 0)
         {
             destinoJogador = posicaoInicialBola;
@@ -126,7 +134,36 @@ public class NovoPenalManager : MonoBehaviour
 
             yield return new WaitForSeconds(0.15f);
         }
+        // =========================================================================
+        // FASE 2: VOCÊ É O GOLEIRO (IA CHUTANDO)
+        // =========================================================================
+        else if (faseDoJogo == 1)
+        {
+            // Força o boneco a dar um passo para trás para simular o início da corrida
+            if (jogador != null) jogador.position = posicaoInicialJogador;
 
+            // Define o alvo da corrida como a posição da bola
+            destinoJogador = posicaoInicialBola;
+            if (jogadorAnimator != null) jogadorAnimator.Play("Jogador_Parado");
+
+            // Aguarda o boneco se mover fisicamente até a bola (Graças ao ajuste do Update)
+            while (jogador != null && Vector2.Distance(jogador.position, (Vector3)destinoJogador) > 0.4f)
+            {
+                yield return null;
+            }
+
+            // Ativa a animação de chute no momento do impacto
+            if (jogadorAnimator != null) jogadorAnimator.Play("Jogador_Chutando");
+
+            if (audioSource != null)
+            {
+                audioSource.Play();
+            }
+
+            yield return new WaitForSeconds(0.15f);
+        }
+
+        // Executa a validação se foi gol ou se você defendeu no clique
         bool foiGol = ChutesRealizadosMatematica(cantoClicado);
 
         if (foiGol)
@@ -135,11 +172,7 @@ public class NovoPenalManager : MonoBehaviour
 
             if (rectLetreiroGol != null)
             {
-                rectLetreiroGol.anchoredPosition = new Vector2(1200f, 0f);
-                textoGritoDeGol.SetActive(true);
-                xAlvoLetreiro = 0f;
-                moverLetreiroHorizontal = true;
-                Invoke(nameof(DeslizarParaForaDaTela), 1.2f);
+                StartCoroutine(GerenciarLetreiroGol());
             }
         }
 
@@ -150,22 +183,36 @@ public class NovoPenalManager : MonoBehaviour
         animacaoAtiva = false;
     }
 
-    void DeslizarParaForaDaTela()
-    {
-        xAlvoLetreiro = -1200f;
-        Invoke(nameof(EsconderTextoDeGol), 0.4f);
-    }
 
-    void EsconderTextoDeGol()
+
+    // CORREÇÃO: Coroutine que gerencia a entrada, repouso e saída do letreiro de Gol de forma estável
+    System.Collections.IEnumerator GerenciarLetreiroGol()
     {
+        rectLetreiroGol.anchoredPosition = new Vector2(1200f, 0f);
+        textoGritoDeGol.SetActive(true);
+        xAlvoLetreiro = 0f;
+        moverLetreiroHorizontal = true;
+
+        // Espera 1.2 segundos centralizado exibindo o gol
+        yield return new WaitForSeconds(1.2f);
+
+        // Desliza para fora da tela
+        xAlvoLetreiro = -1200f;
+
+        // Espera mais 0.5 segundos até atingir a lateral externa para desligar o objeto
+        yield return new WaitForSeconds(0.5f);
         moverLetreiroHorizontal = false;
-        if (textoGritoDeGol != null) textoGritoDeGol.SetActive(false);
+        textoGritoDeGol.SetActive(false);
     }
 
     bool ChutesRealizadosMatematica(int cantoClicado)
     {
         bool marcouGol = false;
         int cantoGoleiroFinal = cantoClicado;
+
+        // CORREÇÃO: Desliga o Animator do Goleiro temporariamente antes do chute,
+        // permitindo que o script rotacione os braços/corpo por física manual sem bloqueios da Unity.
+        if (goleiroAnimator != null) goleiroAnimator.enabled = false;
 
         if (faseDoJogo == 0)
         {
@@ -206,20 +253,24 @@ public class NovoPenalManager : MonoBehaviour
             if (chutesFaseGoleiro >= totalDeChutesPorFase) return false;
             chutesFaseGoleiro++;
 
+            // Inteligência Artificial escolhe o canto do chute de forma aleatória de 0 a 4
             int cantoChuteMaquina = Random.Range(0, 5);
             destinoBola = ObterCoordenadaDoCanto(cantoChuteMaquina);
             destinoGoleiro = ObterCoordenadaDoCanto(cantoClicado);
+
+            // CORREÇÃO CRÍTICA: Aplica a rotação da queda do goleiro baseada no canto clicado pelo jogador
             cantoGoleiroFinal = cantoClicado;
 
-            int dadoGoleiroJogador = Random.Range(0, 51);
-
-            if (cantoChuteMaquina == cantoClicado && dadoGoleiroJogador >= 25)
+            // CORREÇÃO DA MÁQUINA: Agora checa se você pulou EXATAMENTE no mesmo canto que a IA chutou!
+            if (cantoChuteMaquina == cantoClicado)
             {
+                // Se pulou no mesmo canto, defendeu de forma limpa!
                 GameData.DefesasAcertas++;
                 GameData.PontuacaoAtual += 1000;
             }
             else
             {
+                // Se pulou para o canto oposto, a máquina marca gol!
                 golsDaMaquina++;
                 marcouGol = true;
                 GameData.DefesasErradas++;
@@ -227,17 +278,19 @@ public class NovoPenalManager : MonoBehaviour
             }
         }
 
-        if (cantoGoleiroFinal == 0 || cantoGoleiroFinal == 2) funcaoQuedaGoleiro = 65f;
-        else if (cantoGoleiroFinal == 1 || cantoGoleiroFinal == 3) funcaoQuedaGoleiro = -65f;
-        else funcaoQuedaGoleiro = 0f;
+        // Define o ângulo correto da queda lateral do goleiro baseado no canto
+        if (cantoGoleiroFinal == 0 || cantoGoleiroFinal == 2) funcaoQuedaGoleiro = 65f; // Cai para a esquerda
+        else if (cantoGoleiroFinal == 1 || cantoGoleiroFinal == 3) funcaoQuedaGoleiro = -65f; // Cai para a direita
+        else funcaoQuedaGoleiro = 0f; // Fica no meio
 
-        AtualizarPlacarVisual();
+        AktualizarPlacarVisual();
         return marcouGol;
     }
 
     void Update()
     {
-        if (faseDoJogo == 0 && jogador != null && (Vector2)jogador.position != destinoJogador)
+        // CORREÇÃO: Removeu a trava 'faseDoJogo == 0' para permitir que o boneco corra na vez da IA
+        if (jogador != null && (Vector2)jogador.position != destinoJogador)
         {
             jogador.position = Vector3.MoveTowards(jogador.position, destinoJogador, velocidadeDoJogador * Time.deltaTime);
         }
@@ -267,6 +320,7 @@ public class NovoPenalManager : MonoBehaviour
         }
     }
 
+
     void ChecarFimDeTurno()
     {
         if (faseDoJogo == 0 && chutesFaseChutador >= totalDeChutesPorFase)
@@ -288,6 +342,10 @@ public class NovoPenalManager : MonoBehaviour
     void ResetarPosicoesInstantaneo()
     {
         funcaoQuedaGoleiro = 0f;
+
+        // CORREÇÃO: Religamos o Animator do Goleiro no recomeço da rodada para que ele fique em pé respirando (Idle)
+        if (goleiroAnimator != null) goleiroAnimator.enabled = true;
+
         if (jogadorAnimator != null) jogadorAnimator.Play("Jogador_Parado");
         if (bola != null) { bola.position = posicaoInicialBola; destinoBola = posicaoInicialBola; bola.rotation = Quaternion.identity; }
         if (goleiro != null) { goleiro.position = posicaoInicialGoleiro; destinoGoleiro = posicaoInicialGoleiro; goleiro.rotation = Quaternion.identity; }
@@ -303,5 +361,14 @@ public class NovoPenalManager : MonoBehaviour
         return centroDoGol;
     }
 
-    void AtualizarPlacarVisual() { if (textoGolsJogador != null) textoGolsJogador.text = golsDoJogador.ToString(); if (textoGolsMaquina != null) textoGolsMaquina.text = golsDaMaquina.ToString(); }
+    void AktualizarPlacarVisual()
+    {
+        AtualizarPlacarVisual();
+    }
+
+    void AtualizarPlacarVisual()
+    {
+        if (textoGolsJogador != null) textoGolsJogador.text = golsDoJogador.ToString();
+        if (textoGolsMaquina != null) textoGolsMaquina.text = golsDaMaquina.ToString();
+    }
 }

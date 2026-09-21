@@ -11,16 +11,16 @@ public class EscolhaNomeManager : MonoBehaviour
     {
         string nome = campoNome.text.Trim();
 
-        // Garante que não fique vazio se o jogador der apenas espaços
+        // Impede que o campo fique em branco se o jogador apenas apertar espaço
         if (string.IsNullOrEmpty(nome)) nome = "Jogador";
 
         PlayerPrefs.SetString("NomeJogador", nome);
 
-        // BUSCA O HISTÓRICO: Puxa os pontos acumulados se o nome já existir
+        // BUSCA O HISTÓRICO: Puxa os pontos acumulados se o nome já existir no placar
         int pontosAntigos = BuscarPontosDoJogadorNoPlacar(nome);
         GameData.PontuacaoAtual = pontosAntigos;
 
-        // Limpa as estatísticas de chutes/defesas para começar a nova rodada do zero
+        // Limpa as estatísticas de chutes/defesas para a nova rodada começar zerada
         GameData.GolsAcertos = 0;
         GameData.GolsFora = 0;
         GameData.DefesasAcertas = 0;
@@ -37,7 +37,7 @@ public class EscolhaNomeManager : MonoBehaviour
             string json = PlayerPrefs.GetString("FeiraCienciasLeaderboard");
             LeaderboardSaveData data = JsonUtility.FromJson<LeaderboardSaveData>(json);
 
-            // Localiza a ficha do jogador (ignorando maiúsculas e minúsculas)
+            // Localiza a ficha do jogador ignorando maiúsculas e minúsculas
             PlayerScoreAuxiliar jogadorExistente = data.scores.Find(p => p.playerName.Equals(nome, System.StringComparison.OrdinalIgnoreCase));
 
             if (jogadorExistente != null)
@@ -45,7 +45,7 @@ public class EscolhaNomeManager : MonoBehaviour
                 return jogadorExistente.score;
             }
         }
-        return 0; // Se o nome for inédito, começa com 0 pontos
+        return 0; // Se for um jogador inédito, começa com 0 pontos
     }
 
     public void Voltar()
@@ -59,7 +59,6 @@ public class EscolhaNomeManager : MonoBehaviour
         public List<PlayerScoreAuxiliar> scores;
     }
 
-    // Classe espelho local para evitar que a Unity dê o erro CS0246 de falta de referência
     [System.Serializable]
     private class PlayerScoreAuxiliar
     {
