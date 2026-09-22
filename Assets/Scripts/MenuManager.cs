@@ -3,14 +3,9 @@ using UnityEngine.SceneManagement;
 
 public class MenuManager : MonoBehaviour
 {
-    public void BotaoVerPlacar()
-    {
-        SceneManager.LoadScene("Ranking");
-    }
-
     public void Jogar()
     {
-        SceneManager.LoadScene("EscolhaNome");
+        SceneManager.LoadScene("EscolhaDePaís");
     }
 
     public void Sair()
@@ -21,9 +16,5 @@ public class MenuManager : MonoBehaviour
     public void Creditos()
     {
         SceneManager.LoadScene("Creditos");
-    }
-    public void Tutorial()
-    {
-        SceneManager.LoadScene("Tutorial");
     }
 }

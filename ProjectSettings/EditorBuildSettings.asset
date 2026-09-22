@@ -20,15 +20,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Creditos.unity
     guid: 6568005c1a6cf2143acb6a20893aad7d
-  - enabled: 1
-    path: Assets/Scenes/Tutorial.unity
-    guid: cc81c2d112d0a1c4eaf59d95815ccb0d
-  - enabled: 1
-    path: Assets/Scenes/EscolhaNome.unity
-    guid: 2ad2dad382ad45c4f941c630cbe0534a
-  - enabled: 1
-    path: Assets/Scenes/Ranking.unity
-    guid: 0940ebf179291654d9e1d3dc3b78a165
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
