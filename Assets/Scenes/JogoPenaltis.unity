@@ -1415,10 +1415,10 @@ ParticleSystemRenderer:
   m_SmallMeshCulling: 1
   m_ForceMeshLod: -1
   m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1441,8 +1441,8 @@ ParticleSystemRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 15
   m_MaskInteraction: 0
-  m_RenderMode: 0
-  m_MeshDistribution: 0
+  m_RenderMode: 4
+  m_MeshDistribution: 1
   m_SortMode: 0
   m_MinParticleSize: 0
   m_MaxParticleSize: 0.5
@@ -1464,7 +1464,7 @@ ParticleSystemRenderer:
   m_VertexStreams: 00010304
   m_UseCustomTrailVertexStreams: 0
   m_TrailVertexStreams: 00010304
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
@@ -1608,7 +1608,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 4
+      scalar: 5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -1726,7 +1726,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0.4
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -2807,15 +2807,15 @@ ParticleSystem:
         m_NumAlphaKeys: 2
   UVModule:
     serializedVersion: 2
-    enabled: 0
-    mode: 0
+    enabled: 1
+    mode: 1
     timeMode: 0
     fps: 30
     frameOverTime:
       serializedVersion: 2
-      minMaxState: 1
-      scalar: 0.9999
-      minScalar: 0.9999
+      minMaxState: 3
+      scalar: 0.9285714
+      minScalar: 0
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -2866,7 +2866,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startFrame:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -2926,7 +2926,20 @@ ParticleSystem:
     uvChannelMask: -1
     rowMode: 1
     sprites:
-    - sprite: {fileID: 0}
+    - sprite: {fileID: 901261953, guid: 2739ede505284834199beac6e9d08d58, type: 3}
+    - sprite: {fileID: -2105097466, guid: 2739ede505284834199beac6e9d08d58, type: 3}
+    - sprite: {fileID: 401449640, guid: 2739ede505284834199beac6e9d08d58, type: 3}
+    - sprite: {fileID: -2104943040, guid: 2739ede505284834199beac6e9d08d58, type: 3}
+    - sprite: {fileID: -115809466, guid: 2739ede505284834199beac6e9d08d58, type: 3}
+    - sprite: {fileID: -891967606, guid: 2739ede505284834199beac6e9d08d58, type: 3}
+    - sprite: {fileID: -70563885, guid: 2739ede505284834199beac6e9d08d58, type: 3}
+    - sprite: {fileID: 1143720416, guid: 2739ede505284834199beac6e9d08d58, type: 3}
+    - sprite: {fileID: -782088883, guid: 2739ede505284834199beac6e9d08d58, type: 3}
+    - sprite: {fileID: 1037217899, guid: 2739ede505284834199beac6e9d08d58, type: 3}
+    - sprite: {fileID: 64070308, guid: 2739ede505284834199beac6e9d08d58, type: 3}
+    - sprite: {fileID: 1192319762, guid: 2739ede505284834199beac6e9d08d58, type: 3}
+    - sprite: {fileID: 1402283393, guid: 2739ede505284834199beac6e9d08d58, type: 3}
+    - sprite: {fileID: 1568916698, guid: 2739ede505284834199beac6e9d08d58, type: 3}
     flipU: 0
     flipV: 0
   VelocityModule:
@@ -6203,13 +6216,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 368654918}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.052335896, z: 0, w: 0.9986295}
-  m_LocalPosition: {x: 3793.6416, y: 2243.172, z: 0}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 6, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &421922246
 GameObject:
   m_ObjectHideFlags: 0
@@ -8640,6 +8653,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1507404584
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1507404586}
+  - component: {fileID: 1507404585}
+  m_Layer: 0
+  m_Name: GerenciadorDeCamisas
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1507404585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1507404584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c46826c04ba9a564ca6a922e4cc04ddf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GerenciadorDeCamisas
+  jogadorSpriteRenderer: {fileID: 0}
+  armarioDeCamisas: []
+--- !u!4 &1507404586
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1507404584}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 685.2272, y: 676.6571, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1516476691
 GameObject:
   m_ObjectHideFlags: 0
@@ -8952,7 +9011,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -8994,9 +9053,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1740226493}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.24, y: -4.04, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -3.240001, y: -4.04, z: 0}
+  m_LocalScale: {x: 3.5, y: 3.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -9132,6 +9191,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1849210482}
   - component: {fileID: 1849210481}
+  - component: {fileID: 1849210483}
   m_Layer: 0
   m_Name: GerenciadorDoJogo
   m_TagString: Untagged
@@ -9155,6 +9215,8 @@ MonoBehaviour:
   goleiro: {fileID: 685048230}
   jogador: {fileID: 1740226495}
   scriptQuizManager: {fileID: 1719279313}
+  gerenciadorDeCamisas: {fileID: 1507404585}
+  cartaoMemoria: {fileID: 11400000, guid: de3e47174704e694abd0c4b2e5f503ce, type: 2}
   textoGolsJogador: {fileID: 114559549}
   textoGolsMaquina: {fileID: 1119543684}
   textoGritoDeGol: {fileID: 345650672}
@@ -9162,7 +9224,6 @@ MonoBehaviour:
   confetesGol: {fileID: 368654920}
   velocidadeDaBola: 35
   velocidadeDoGoleiro: 20
-  velocidadeDoJogador: 14
   totalDeChutesPorFase: 5
   superiorEsquerdo: {x: -5.71, y: 1.78}
   superiorDireito: {x: 5.54, y: 1.45}
@@ -9184,6 +9245,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1849210483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1849210480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c46826c04ba9a564ca6a922e4cc04ddf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GerenciadorDeCamisas
+  jogadorSpriteRenderer: {fileID: 1740226494}
+  armarioDeCamisas: []
 --- !u!1 &1849762896
 GameObject:
   m_ObjectHideFlags: 0
@@ -9916,3 +9991,4 @@ SceneRoots:
   - {fileID: 208049783}
   - {fileID: 1740226495}
   - {fileID: 368654921}
+  - {fileID: 1507404586}

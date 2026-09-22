@@ -13,6 +13,13 @@ public class EscolhaDePaisManager : MonoBehaviour
     [Header("Bandeiras (Arraste os Sprites no Inspector)")]
     public Sprite[] bandeiras;
 
+    // 💾 O LINK COM O CARTÃO DE MEMÓRIA DO JOGO!
+    [Header("Cartão de Memória da Copa")]
+    public BancoDeDadosCopa cartaoMemoria;
+
+    [Header("Uniformes do Batedor (Arraste na mesma ordem das bandeiras!)")]
+    public Sprite[] uniformesPaises;
+
     [Header("Nomes das 48 Seleções")]
     public string[] nomesPaises = {
         "África do Sul", "Alemanha", "Arábia Saudita", "Argélia", "Argentina",
@@ -74,18 +81,25 @@ public class EscolhaDePaisManager : MonoBehaviour
 
     public void Selecionar()
     {
-        // Salva os dados selecionados no GameData antes de mudar de cena
         if (nomesPaises.Length > paisTime1) GameData.PaisSelecionado = nomesPaises[paisTime1];
         if (siglasPaises.Length > paisTime1) GameData.SiglaTime1 = siglasPaises[paisTime1];
         if (bandeiras.Length > paisTime1) GameData.BandeiraTime1 = bandeiras[paisTime1];
 
+        // 🎯 A MÁGICA GRAVADORA AUTOMÁTICA AQUI:
+        if (cartaoMemoria != null && uniformesPaises != null && paisTime1 < uniformesPaises.Length)
+        {
+            // Grava na memória para a opção PlayerPrefs
+            PlayerPrefs.SetInt("IndiceUniformeSelecionado", paisTime1);
+            PlayerPrefs.Save();
+
+            // Injeta fisicamente a imagem certa dentro do Cartão de Memória antes de mudar de cena!
+            cartaoMemoria.uniformeEscolhidoPeloJogador = uniformesPaises[paisTime1];
+            Debug.Log($"[GRAVADOR] Cartão atualizado automaticamente com o uniforme de: {nomesPaises[paisTime1]}");
+        }
+
         if (siglasPaises.Length > paisTime2) GameData.SiglaTime2 = siglasPaises[paisTime2];
         if (bandeiras.Length > paisTime2) GameData.BandeiraTime2 = bandeiras[paisTime2];
 
-        // Linha de teste para ver a bandeira salva no Console da Unity
-        Debug.Log("Bandeira 1 salva: " + GameData.BandeiraTime1 + " | Sigla 1: " + GameData.SiglaTime1);
-
-        // Carrega a sua cena do pênalti
         SceneManager.LoadScene("JogoPenaltis");
     }
 }
