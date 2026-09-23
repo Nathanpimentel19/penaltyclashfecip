@@ -255,12 +255,21 @@ public class NovoPenalManager : MonoBehaviour
             if (cantoChuteMaquina == cantoClicado)
             {
                 marcouGol = false;
+
+                // CORRIGIDO: faltava contabilizar a defesa certa aqui, por isso
+                // o quiz final mostrava "Defesas acertas" sempre zerado.
+                GameData.DefesasAcertas++;
                 GameData.PontuacaoAtual += 1000;
             }
             else
             {
                 golsDaMaquina++;
                 marcouGol = true;
+
+                // CORRIGIDO: faltava contabilizar a defesa errada (gol sofrido) e
+                // descontar pontos, igual já era feito na fase de batedor.
+                GameData.DefesasErradas++;
+                GameData.PontuacaoAtual = Mathf.Max(0, GameData.PontuacaoAtual - 200);
             }
 
             // CORRIGIDO 100%: Alinhado com a fiação 'DaRounda' do script do Santiago!
