@@ -74,7 +74,12 @@ public class EscolhaDePaisManager : MonoBehaviour
 
     public void Selecionar()
     {
-        // Salva os dados selecionados no GameData antes de mudar de cena
+        // Salva os dados selecionados no GameData antes de mudar de cena.
+        // IndexTime1 / IndexTime2 são os índices usados pelo GerenciadorDeCamisas
+        // para buscar o boneco certo no array "bonecos" (48 gavetas, mesma ordem).
+        GameData.IndexTime1 = paisTime1;
+        GameData.IndexTime2 = paisTime2;
+
         if (nomesPaises.Length > paisTime1) GameData.PaisSelecionado = nomesPaises[paisTime1];
         if (siglasPaises.Length > paisTime1) GameData.SiglaTime1 = siglasPaises[paisTime1];
         if (bandeiras.Length > paisTime1) GameData.BandeiraTime1 = bandeiras[paisTime1];

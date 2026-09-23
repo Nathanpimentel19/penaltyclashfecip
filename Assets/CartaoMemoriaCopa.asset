@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97a37a8a3eef580468faa2afe85439c4, type: 3}
+  m_Name: CartaoMemoriaCopa
+  m_EditorClassIdentifier: Assembly-CSharp::BancoDeDadosCopa
+  uniformeEscolhidoPeloJogador: {fileID: 3832680735837276337, guid: 5cecf1c4a081faf4ea2745dc93ac3a29, type: 3}
