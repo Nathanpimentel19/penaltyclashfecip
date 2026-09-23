@@ -25,6 +25,10 @@ public class NovoPenalManager : MonoBehaviour
     public GameObject textoGritoDeGol;
     public float velocidadDoLetreiro = 1500f;
 
+    [Header("Avisos de Fase")]
+    public GameObject avisoJogador;
+    public GameObject avisoGoleiro;
+
     [Header("Sistema de Confetes (Arraste Aqui)")]
     public ParticleSystem confetesGol;
 
@@ -83,7 +87,16 @@ public class NovoPenalManager : MonoBehaviour
 
     void Start()
     {
-        if (audioTorcida != null) audioTorcida.Play();
+        if (avisoJogador != null)
+        {
+            avisoJogador.SetActive(true);
+            Invoke(nameof(EsconderAvisoJogador), 2f);
+        }
+        if (avisoGoleiro != null)
+        {
+            avisoGoleiro.SetActive(true);
+        }
+            if (audioTorcida != null) audioTorcida.Play();
         if (bola != null) posicaoInicialBola = bola.position;
         if (goleiro != null)
         {
@@ -286,7 +299,20 @@ public class NovoPenalManager : MonoBehaviour
         AtualizarPlacarVisual();
         return marcouGol;
     }
-
+    void EsconderAvisoJogador()
+    {
+        if (avisoJogador != null)
+        {
+            avisoJogador.SetActive(false);
+        }
+    }
+    void EsconderAvisoGoleiro()
+    {
+        if (avisoGoleiro != null)
+        {
+            avisoGoleiro.SetActive(false);
+        }
+    }
     void Update()
     {
         if (bola != null && (Vector2)bola.position != destinoBola)
@@ -333,6 +359,11 @@ public class NovoPenalManager : MonoBehaviour
             }
         }
         else if (faseDoJogo == 1 && chutesFaseGoleiro >= totalDeChutesPorFase)
+            if (avisoGoleiro != null)
+            {
+                avisoGoleiro.SetActive(true);
+                Invoke(nameof(EsconderAvisoGoleiro), 2f);
+            }
         {
             if (scriptQuizManager != null) scriptQuizManager.IniciarQuiz();
         }
