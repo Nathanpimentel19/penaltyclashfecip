@@ -40,6 +40,13 @@ public class NovoPenalManager : MonoBehaviour
     public AudioSource audioSource;
     public AudioSource audioTorcida;
 
+    [Header("Botão de Som (Arraste Aqui)")]
+    public Image imagemBotaoSom;
+    public Sprite iconeSomLigado;
+    public Sprite iconeSomDesligado;
+    private bool somMutado = false;
+    private const string CHAVE_SOM_MUTADO = "SomMutado";
+
     [Header("Configurações de Velocidade")]
     public float velocidadDaBola = 35f;
     public float velocidadeDoGoleiro = 20f;
@@ -92,11 +99,14 @@ public class NovoPenalManager : MonoBehaviour
             avisoJogador.SetActive(true);
             Invoke(nameof(EsconderAvisoJogador), 2f);
         }
+        // CORRIGIDO: o avisoGoleiro estava sendo ativado aqui, no início do jogo,
+        // e nunca era desligado — por isso ficava aparecendo pra sempre na tela.
+        // Ele só deve aparecer quando o jogador virar goleiro (ver ChecarFimDeTurno).
         if (avisoGoleiro != null)
         {
-            avisoGoleiro.SetActive(true);
+            avisoGoleiro.SetActive(false);
         }
-            if (audioTorcida != null) audioTorcida.Play();
+        if (audioTorcida != null) audioTorcida.Play();
         if (bola != null) posicaoInicialBola = bola.position;
         if (goleiro != null)
         {
@@ -118,6 +128,10 @@ public class NovoPenalManager : MonoBehaviour
         if (confetesGol != null) confetesGol.Stop();
 
         if (textoVoceDefendeu != null) textoVoceDefendeu.SetActive(false);
+
+        // Aplica a preferência de som salva (se o jogador mutou antes, continua mutado)
+        somMutado = PlayerPrefs.GetInt(CHAVE_SOM_MUTADO, 0) == 1;
+        AplicarEstadoDoSom();
 
         ResetarPosicoesInstantaneo();
         AtualizarPlacarVisual();
@@ -313,6 +327,34 @@ public class NovoPenalManager : MonoBehaviour
             avisoGoleiro.SetActive(false);
         }
     }
+
+    // Chame este método no OnClick() do botão de som, no Inspector
+    public void AlternarSom()
+    {
+        somMutado = !somMutado;
+        AplicarEstadoDoSom();
+
+        PlayerPrefs.SetInt(CHAVE_SOM_MUTADO, somMutado ? 1 : 0);
+        PlayerPrefs.Save();
+    }
+
+    void AplicarEstadoDoSom()
+    {
+        // Controla o volume de TODOS os sons do jogo de uma vez (chute, torcida, etc.)
+        AudioListener.volume = somMutado ? 0f : 1f;
+
+        if (imagemBotaoSom != null)
+        {
+            if (somMutado && iconeSomDesligado != null)
+            {
+                imagemBotaoSom.sprite = iconeSomDesligado;
+            }
+            else if (!somMutado && iconeSomLigado != null)
+            {
+                imagemBotaoSom.sprite = iconeSomLigado;
+            }
+        }
+    }
     void Update()
     {
         if (bola != null && (Vector2)bola.position != destinoBola)
@@ -357,14 +399,21 @@ public class NovoPenalManager : MonoBehaviour
             {
                 gerenciadorDeCamisas.MudarUniformeDaRounda(0, true);
             }
-        }
-        else if (faseDoJogo == 1 && chutesFaseGoleiro >= totalDeChutesPorFase)
+
+            // CORRIGIDO: o aviso "Você é o goleiro" estava sendo mostrado no lugar
+            // errado (no fim da fase 2). Agora ele aparece aqui, exatamente no
+            // momento em que a fase muda para goleiro, e some sozinho depois de 2s.
             if (avisoGoleiro != null)
             {
                 avisoGoleiro.SetActive(true);
                 Invoke(nameof(EsconderAvisoGoleiro), 2f);
             }
+        }
+        else if (faseDoJogo == 1 && chutesFaseGoleiro >= totalDeChutesPorFase)
         {
+            // CORRIGIDO: as chaves estavam soltas aqui (herdado de uma edição anterior),
+            // o que fazia o bloco abaixo (e o início do quiz) rodar a CADA chute,
+            // travando o jogo logo na primeira cobrança em vez de esperar as 5 rodadas.
             if (scriptQuizManager != null) scriptQuizManager.IniciarQuiz();
         }
     }
