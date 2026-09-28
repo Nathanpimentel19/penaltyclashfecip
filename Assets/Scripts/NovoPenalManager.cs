@@ -95,7 +95,7 @@ public class NovoPenalManager : MonoBehaviour
     void Start()
     {
         if (avisoJogador != null)
-        {
+        { 
             avisoJogador.SetActive(true);
             Invoke(nameof(EsconderAvisoJogador), 2f);
         }
