@@ -14,6 +14,9 @@ public class QuizManager : MonoBehaviour
     public GameObject botaoJogarDeNovo;
     public GameObject botaoVoltar;
 
+    [Header("Botão de Som (some ao terminar o jogo)")]
+    public GameObject botaoDeSom;
+
     private Dictionary<int, string> historicoCopas = new Dictionary<int, string>()
     {
         {1930, "Uruguai"}, {1934, "Itália"}, {1938, "Itália"}, {1950, "Uruguai"},
@@ -240,6 +243,13 @@ public class QuizManager : MonoBehaviour
                 btn.onClick.RemoveAllListeners();
                 btn.onClick.AddListener(SalvarEVoltarParaOMenu);
             }
+        }
+
+        // ADICIONADO: esconde o botão de som (efeitos sonoros) assim que a tela
+        // de fim de jogo / "Jogar Novamente" aparece.
+        if (botaoDeSom != null)
+        {
+            botaoDeSom.SetActive(false);
         }
     } // Fim do método TerminarQuiz
 

@@ -769,6 +769,155 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1174888991
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1174888994}
+  - component: {fileID: 1174888993}
+  - component: {fileID: 1174888992}
+  m_Layer: 0
+  m_Name: MusicaManager
+  m_TagString: MusicaManager
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1174888992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1174888991}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b6c03b125275dfb498b9050b6ad48d76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MusicaManager
+  audioSource: {fileID: 1174888993}
+  musicas:
+  - {fileID: 8300000, guid: 787e812552264a34793b7bf8c4f78ef7, type: 3}
+  - {fileID: 8300000, guid: 3798176e77d8e424e88b3a2b2a10f966, type: 3}
+  - {fileID: 8300000, guid: b67ce3bb9f1d5ee469f0508960f7fe97, type: 3}
+  btnMutar: {fileID: 0}
+  btnDesmutar: {fileID: 0}
+--- !u!82 &1174888993
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1174888991}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!4 &1174888994
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1174888991}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 830.248, y: 418.7213, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1179679972
 GameObject:
   m_ObjectHideFlags: 0
@@ -1495,101 +1644,101 @@ MonoBehaviour:
   nomesPaises:
   - "\xC1frica do Sul"
   - Alemanha
-  - "Ar\xE1bia Saudita"
+  - Arabia Saudita
   - "Arg\xE9lia"
   - Argentina
-  - "Austr\xE1lia"
+  - Australia
   - "\xC1ustria"
   - "B\xE9lgica"
-  - "Bol\xEDvia"
+  - "B\xF4snia "
   - Brasil
-  - "Camar\xF5es"
+  - Cabo verde
   - "Canad\xE1"
-  - Chile
+  - Catar
   - "Col\xF4mbia"
   - Coreia do Sul
-  - Costa Rica
+  - 'Costa do Marfim '
   - "Cro\xE1cia"
-  - Dinamarca
+  - "Cura\xE7ao"
+  - 'Egito '
   - Equador
   - "Esc\xF3cia"
   - Espanha
   - Estados Unidos
-  - Egito
   - "Fran\xE7a"
   - Gana
-  - Holanda
-  - Hungria
+  - Haiti
+  - 'Holanda '
   - Inglaterra
   - "Ir\xE3"
-  - Irlanda
-  - "It\xE1lia"
+  - Iraque
   - "Jap\xE3o"
+  - "Jord\xE2nia "
   - Marrocos
   - "M\xE9xico"
-  - "Nig\xE9ria"
-  - Noruega
-  - "Nova Zel\xE2ndia"
-  - "Pa\xEDs de Gales"
-  - Paraguai
-  - Peru
-  - "Pol\xF4nia"
-  - Portugal
-  - "R\xFAssia"
-  - "S\xE9rvia"
-  - "Su\xE9cia"
-  - "Sui\xE7a"
+  - 'Noruega '
+  - "Nova Zel\xE2ndia "
+  - "Panam\xE1"
+  - 'Paraguai '
+  - 'Portugal '
+  - "Rep\xFAblica Democr\xE1tica do Congol "
+  - Rep Theca
+  - 'Senegal '
+  - "Su\xE9cia "
+  - "Su\xED\xE7a"
+  - "Tun\xEDsia"
+  - 'Turquia '
   - Uruguai
-  - Venezuela
+  - "Uzbesquit\xE3o "
   siglasPaises:
   - RSA
   - GER
   - KSA
   - ALG
-  - ARG
+  - 'ARG '
   - AUS
   - AUT
   - BEL
-  - BOL
+  - BIH
   - BRA
-  - CMR
+  - CPV
   - CAN
-  - CHI
+  - QAT
   - COL
   - KOR
-  - CRC
+  - CIV
   - CRO
-  - DEN
+  - CUW
+  - EGY
   - ECU
-  - SCO
+  - ECO
   - ESP
   - USA
-  - EGY
   - FRA
   - GHA
+  - HAI
   - NED
-  - HUN
   - ENG
   - IRN
-  - IRL
-  - ITA
+  - IRQ
   - JPN
+  - JOR
   - MAR
   - MEX
-  - NGA
   - NOR
   - NZL
-  - WAL
+  - PAN
   - PAR
-  - PER
-  - POL
   - POR
-  - RUS
-  - SRB
+  - COD
+  - CZE
+  - SEN
   - SWE
   - SUI
+  - TUN
+  - TUR
   - URU
-  - VEN
+  - UZB
 --- !u!1 &1933395836
 GameObject:
   m_ObjectHideFlags: 0
@@ -1957,3 +2106,4 @@ SceneRoots:
   - {fileID: 1536995953}
   - {fileID: 577882546}
   - {fileID: 1179679974}
+  - {fileID: 1174888994}

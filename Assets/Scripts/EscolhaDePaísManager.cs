@@ -15,30 +15,12 @@ public class EscolhaDePaisManager : MonoBehaviour
 
     [Header("Nomes das 48 Seleções")]
     public string[] nomesPaises = {
-        "África do Sul", "Alemanha", "Arábia Saudita", "Argélia", "Argentina",
-        "Austrália", "Áustria", "Bélgica", "Bolívia", "Brasil",
-        "Camarões", "Canadá", "Chile", "Colômbia", "Coreia do Sul",
-        "Costa Rica", "Croácia", "Dinamarca", "Equador", "Escócia",
-        "Espanha", "Estados Unidos", "Egito", "França", "Gana",
-        "Holanda", "Hungria", "Inglaterra", "Irã", "Irlanda",
-        "Itália", "Japão", "Marrocos", "México", "Nigéria",
-        "Noruega", "Nova Zelândia", "País de Gales", "Paraguai", "Peru",
-        "Polônia", "Portugal", "Rússia", "Sérvia", "Suécia",
-        "Suiça", "Uruguai", "Venezuela"
+        "África do Sul", "Alemanha", "Argélia", "Argentina", "Arábia Saudita", "Austrália", "Áustria", "Bélgica", "Bósnia e Herzegovina", "Brasil", "Cabo Verde", "Canadá", "Catar", "Colômbia", "Coreia do Sul", "Costa do Marfim", "Croácia", "Curaçau", "Egito", "Equador", "Escócia", "Espanha", "Estados Unidos", "França", "Gana", "Haiti", "Holanda", "Inglaterra", "Irã", "Iraque", "Japão", "Jordânia", "Marrocos", "México", "Noruega", "Nova Zelândia", "Panamá", "Paraguai", "Portugal", "RD Congo", "República Tcheca", "Senegal", "Suécia", "Suíça", "Tunísia", "Turquia", "Uruguai", "Uzbequistão"
     };
 
     [Header("Siglas das 48 Seleções")]
     public string[] siglasPaises = {
-        "RSA", "GER", "KSA", "ALG", "ARG",
-        "AUS", "AUT", "BEL", "BOL", "BRA",
-        "CMR", "CAN", "CHI", "COL", "KOR",
-        "CRC", "CRO", "DEN", "ECU", "SCO",
-        "ESP", "USA", "EGY", "FRA", "GHA",
-        "NED", "HUN", "ENG", "IRN", "IRL",
-        "ITA", "JPN", "MAR", "MEX", "NGA",
-        "NOR", "NZL", "WAL", "PAR", "PER",
-        "POL", "POR", "RUS", "SRB", "SWE",
-        "SUI", "URU", "VEN"
+        "RSA", "GER", "ALG", "ARG", "KSA", "AUS", "AUT", "BEL", "BIH", "BRA", "CPV", "CAN", "QAT", "COL", "KOR", "CIV", "CRO", "CUW", "EGY", "ECU", "SCO", "ESP", "USA", "FRA", "GHA", "HAI", "NED", "ENG", "IRN", "IRQ", "JPN", "JOR", "MAR", "MEX", "NOR", "NZL", "PAN", "PAR", "POR", "COD", "CZE", "SEN", "SWE", "SUI", "TUN", "TUR", "URU", "UZB"
     };
 
     private int paisTime1 = 0;

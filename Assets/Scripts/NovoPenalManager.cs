@@ -40,6 +40,10 @@ public class NovoPenalManager : MonoBehaviour
     public AudioSource audioSource;
     public AudioSource audioTorcida;
 
+    [Header("Gritos da Torcida (Arraste Aqui)")]
+    public AudioClip somGritoGolTorcida;
+    public AudioClip somGritoDefesaTorcida;
+
     [Header("Botão de Som (Arraste Aqui)")]
     public Image imagemBotaoSom;
     public Sprite iconeSomLigado;
@@ -95,7 +99,7 @@ public class NovoPenalManager : MonoBehaviour
     void Start()
     {
         if (avisoJogador != null)
-        { 
+        {
             avisoJogador.SetActive(true);
             Invoke(nameof(EsconderAvisoJogador), 2f);
         }
@@ -190,12 +194,22 @@ public class NovoPenalManager : MonoBehaviour
         {
             if (confetesGol != null) confetesGol.Play();
             if (rectLetreiroGol != null) StartCoroutine(GerenciarLetreiroGol());
+
+            // ADICIONADO: grito da torcida SÓ quando o gol é seu (fase 1 = você é o batedor).
+            // Gol da máquina (fase 2, você não defendeu) não toca esse grito.
+            if (faseDoJogo == 0)
+            {
+                TocarGritoTorcida(somGritoGolTorcida);
+            }
         }
         else if (faseDoJogo == 1 && textoVoceDefendeu != null)
         {
             // ADICIONADO: mostra "Você defendeu" quando o jogador está na fase de goleiro
             // e o chute da máquina não virou gol.
             StartCoroutine(GerenciarTextoDefendeu());
+
+            // ADICIONADO: grito da torcida comemorando a SUA defesa
+            TocarGritoTorcida(somGritoDefesaTorcida);
         }
 
         yield return esperaReset;
@@ -203,6 +217,16 @@ public class NovoPenalManager : MonoBehaviour
         ChecarFimDeTurno();
         ResetarPosicoesInstantaneo();
         animacaoAtiva = false;
+    }
+
+    // ADICIONADO: toca um grito pontual da torcida por cima da música/ambiente que já
+    // está rodando em loop no audioTorcida, sem cortar ela.
+    void TocarGritoTorcida(AudioClip clipe)
+    {
+        if (audioTorcida != null && clipe != null)
+        {
+            audioTorcida.PlayOneShot(clipe);
+        }
     }
 
     System.Collections.IEnumerator GerenciarLetreiroGol()
