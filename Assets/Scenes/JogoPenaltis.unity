@@ -606,10 +606,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "VOC\xCA DEFENDEEEEEEEEEEEEEEEEEEEEEEEEEEUUUUUUUUUUUUUUUUUUUUUUUUUUU!!!!!!!"
+  m_text: QUE DEFESA!
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 53c159f0a932f9c4f96b51665258810d, type: 2}
-  m_sharedMaterial: {fileID: -4734235922565271373, guid: 53c159f0a932f9c4f96b51665258810d, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 616e216320b929c4c8aed6be48fe773d, type: 2}
+  m_sharedMaterial: {fileID: 4902381894418786845, guid: 616e216320b929c4c8aed6be48fe773d, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -633,8 +633,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 70
+  m_fontSizeBase: 70
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -7323,7 +7323,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 128, y: 0}
+  m_AnchoredPosition: {x: 152, y: -50}
   m_SizeDelta: {x: 120, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &653163572
@@ -10424,7 +10424,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -175, y: 6}
+  m_AnchoredPosition: {x: -162, y: -44}
   m_SizeDelta: {x: 120, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1851574687

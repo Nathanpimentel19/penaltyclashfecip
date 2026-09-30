@@ -90,6 +90,11 @@ public class NovoPenalManager : MonoBehaviour
     private float xAlvoLetreiro = 0f;
     private bool moverLetreiroHorizontal = false;
 
+    private RectTransform rectTextoDefendeu;
+    private float xAlvoTextoDefendeu = 0f;
+    private bool moverTextoDefendeuHorizontal = false;
+    private float yOriginalTextoDefendeu = 0f;
+
     private readonly int hashParado = Animator.StringToHash("Jogador_Parado");
     private readonly int hashChutando = Animator.StringToHash("Jogador_Chutando");
     private readonly WaitForSeconds esperaCurta = new WaitForSeconds(0.05f);
@@ -131,7 +136,14 @@ public class NovoPenalManager : MonoBehaviour
 
         if (confetesGol != null) confetesGol.Stop();
 
-        if (textoVoceDefendeu != null) textoVoceDefendeu.SetActive(false);
+        if (textoVoceDefendeu != null)
+        {
+            rectTextoDefendeu = textoVoceDefendeu.GetComponent<RectTransform>();
+            // Guarda a altura (Y) em que o texto foi posicionado no editor,
+            // pra animação mexer só no X e não "puxar" ele pra outra altura.
+            if (rectTextoDefendeu != null) yOriginalTextoDefendeu = rectTextoDefendeu.anchoredPosition.y;
+            textoVoceDefendeu.SetActive(false);
+        }
 
         // Aplica a preferência de som salva (se o jogador mutou antes, continua mutado)
         somMutado = PlayerPrefs.GetInt(CHAVE_SOM_MUTADO, 0) == 1;
@@ -242,11 +254,19 @@ public class NovoPenalManager : MonoBehaviour
         textoGritoDeGol.SetActive(false);
     }
 
-    // ADICIONADO: exibe o texto "Você defendeu" por um tempo e depois esconde.
+    // ATUALIZADO: agora o texto "Você defendeu" usa a MESMA animação do letreiro
+    // de gol (GerenciarLetreiroGol) — desliza da direita até o centro, fica
+    // parado, e depois desliza saindo pela esquerda. Padronizado.
     System.Collections.IEnumerator GerenciarTextoDefendeu()
     {
+        rectTextoDefendeu.anchoredPosition = new Vector2(1200f, yOriginalTextoDefendeu);
         textoVoceDefendeu.SetActive(true);
-        yield return new WaitForSeconds(duracaoTextoDefendeu);
+        xAlvoTextoDefendeu = 0f;
+        moverTextoDefendeuHorizontal = true;
+        yield return new WaitForSeconds(1.2f);
+        xAlvoTextoDefendeu = -1200f;
+        yield return new WaitForSeconds(0.5f);
+        moverTextoDefendeuHorizontal = false;
         textoVoceDefendeu.SetActive(false);
     }
 
@@ -407,6 +427,14 @@ public class NovoPenalManager : MonoBehaviour
             Vector2 pos = rectLetreiroGol.anchoredPosition;
             pos.x = Mathf.MoveTowards(pos.x, xAlvoLetreiro, velocidadDoLetreiro * Time.deltaTime);
             rectLetreiroGol.anchoredPosition = pos;
+        }
+
+        if (moverTextoDefendeuHorizontal && rectTextoDefendeu != null)
+        {
+            Vector2 pos = rectTextoDefendeu.anchoredPosition;
+            pos.x = Mathf.MoveTowards(pos.x, xAlvoTextoDefendeu, velocidadDoLetreiro * Time.deltaTime);
+            pos.y = yOriginalTextoDefendeu;
+            rectTextoDefendeu.anchoredPosition = pos;
         }
     }
 
