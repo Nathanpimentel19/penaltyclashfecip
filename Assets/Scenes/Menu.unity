@@ -1854,9 +1854,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MusicaManager
   audioSource: {fileID: 1777293298}
   musicas:
-  - {fileID: 8300000, guid: 787e812552264a34793b7bf8c4f78ef7, type: 3}
+  - {fileID: 8300000, guid: 8623eed4ccb61044498f3a73741111c5, type: 3}
   - {fileID: 8300000, guid: 3798176e77d8e424e88b3a2b2a10f966, type: 3}
   - {fileID: 8300000, guid: b67ce3bb9f1d5ee469f0508960f7fe97, type: 3}
+  - {fileID: 8300000, guid: c391de8c73c4c074ba454816c9fc4bf4, type: 3}
+  - {fileID: 8300000, guid: 3f621721d39179d45b5f197a1176c8e0, type: 3}
+  - {fileID: 8300000, guid: 06327138a4a2edf428c9957162487ed6, type: 3}
   btnMutar: {fileID: 0}
   btnDesmutar: {fileID: 0}
   imagemBotaoPausar: {fileID: 0}
