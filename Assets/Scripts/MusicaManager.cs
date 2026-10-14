@@ -4,6 +4,11 @@ using UnityEngine.UI;
 
 public class MusicaManager : MonoBehaviour
 {
+    // ADICIONADO: endereço fixo do tocador de música. Qualquer script (ou a UI
+    // de uma cena nova) consegue achar o MusicaManager original por aqui,
+    // mesmo depois de trocar de cena.
+    public static MusicaManager Instance;
+
     public AudioSource audioSource;
     public AudioClip[] musicas;
     public GameObject btnMutar;
@@ -23,27 +28,44 @@ public class MusicaManager : MonoBehaviour
 
     void Awake()
     {
-        GameObject[] objetos = GameObject.FindGameObjectsWithTag("MusicaManager");
-
-        if (objetos.Length > 1)
+        // CORRIGIDO: se já existe um MusicaManager (o original, que sobreviveu
+        // à troca de cena), este novo se destrói e o original continua valendo.
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
 
+        Instance = this;
         DontDestroyOnLoad(gameObject);
     }
 
     void Start()
     {
-        TocarMusica();
+        // O duplicado ainda roda Start() antes de ser destruído, então ignora.
+        if (Instance != this) return;
 
-        // ADICIONADO: configura o slider de volume com o valor atual do AudioSource
-        // e passa a ouvir mudanças nele pra ajustar o volume em tempo real.
+        TocarMusica();
+        ConectarUI(imagemBotaoPausar, sliderVolumeMusica);
+    }
+
+    // ADICIONADO: religa o ícone de play/pause e o slider de volume da cena atual.
+    // O PlayerMusicaUI chama isso toda vez que o Menu abre, porque o Canvas
+    // antigo foi destruído na troca de cena e o novo precisa ser conectado.
+    public void ConectarUI(Image novaImagemPausar, Slider novoSlider)
+    {
+        imagemBotaoPausar = novaImagemPausar;
+
+        if (sliderVolumeMusica != null)
+        {
+            sliderVolumeMusica.onValueChanged.RemoveListener(DefinirVolume);
+        }
+
+        sliderVolumeMusica = novoSlider;
+
         if (sliderVolumeMusica != null)
         {
             sliderVolumeMusica.value = audioSource != null ? audioSource.volume : 1f;
-            sliderVolumeMusica.onValueChanged.RemoveAllListeners();
             sliderVolumeMusica.onValueChanged.AddListener(DefinirVolume);
         }
 
@@ -52,6 +74,8 @@ public class MusicaManager : MonoBehaviour
 
     void Update()
     {
+        if (Instance != this) return;
+
         if (SceneManager.GetActiveScene().name == "JogoPenaltis")
         {
             if (audioSource != null && audioSource.isPlaying)
@@ -59,12 +83,13 @@ public class MusicaManager : MonoBehaviour
                 audioSource.Stop();
             }
 
+            // O Stop() zera a música, então não faz sentido continuar "pausado".
+            estaPausado = false;
             return;
         }
 
-        // CORRIGIDO: quando a música está pausada (Pause()), o Unity marca
-        // isPlaying = false, então sem o "!estaPausado" aqui embaixo a música
-        // pausada seria trocada pra próxima sozinha, a cada frame.
+        // Quando a música está pausada o Unity marca isPlaying = false, então
+        // sem o "!estaPausado" a música pausada seria trocada sozinha.
         if (audioSource != null && !audioSource.isPlaying && !estaPausado)
         {
             ProximaMusica();
@@ -79,8 +104,7 @@ public class MusicaManager : MonoBehaviour
         AtualizarIconePausar();
     }
 
-    // ADICIONADO: pula pra próxima música da lista, com loop (depois da última volta pra primeira).
-    // Chame este método no OnClick() do botão de "pular" (⏭️).
+    // Pula pra próxima música, com loop (depois da última volta pra primeira).
     public void ProximaMusica()
     {
         musicaAtual++;
@@ -93,9 +117,7 @@ public class MusicaManager : MonoBehaviour
         TocarMusica();
     }
 
-    // ADICIONADO: volta pra música anterior da lista, com loop
-    // (se estiver na primeira, pula pra última). Chame este método
-    // no OnClick() do botão de "voltar" (⏪).
+    // Volta pra música anterior, com loop (na primeira, vai pra última).
     public void MusicaAnterior()
     {
         musicaAtual--;
@@ -108,8 +130,7 @@ public class MusicaManager : MonoBehaviour
         TocarMusica();
     }
 
-    // ADICIONADO: alterna entre pausar e retomar a música atual (sem reiniciar).
-    // Chame este método no OnClick() do botão único de Play/Pause (▶️⏸️).
+    // Alterna entre pausar e retomar a música atual (sem reiniciar).
     public void AlternarPausa()
     {
         if (audioSource == null) return;
@@ -142,8 +163,7 @@ public class MusicaManager : MonoBehaviour
         }
     }
 
-    // ADICIONADO: ajusta o volume só da música (independente do mute e dos
-    // efeitos sonoros do jogo). Ligado automaticamente ao Slider em Start().
+    // Ajusta o volume só da música (independente dos efeitos sonoros).
     public void DefinirVolume(float volume)
     {
         if (audioSource != null)
