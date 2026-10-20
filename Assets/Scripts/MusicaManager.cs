@@ -1,12 +1,11 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MusicaManager : MonoBehaviour
 {
-    // ADICIONADO: endereço fixo do tocador de música. Qualquer script (ou a UI
-    // de uma cena nova) consegue achar o MusicaManager original por aqui,
-    // mesmo depois de trocar de cena.
+    // Endereço fixo do tocador de música (o original, que sobrevive às cenas).
     public static MusicaManager Instance;
 
     public AudioSource audioSource;
@@ -14,22 +13,26 @@ public class MusicaManager : MonoBehaviour
     public GameObject btnMutar;
     public GameObject btnDesmutar;
 
-    [Header("Player de Música (Pausar / Pular / Voltar)")]
-    [Tooltip("Imagem do botão único de Play/Pause, que troca de ícone sozinho.")]
-    public Image imagemBotaoPausar;
+    [Header("Ícones do botão Play/Pause")]
     public Sprite iconePlay;
     public Sprite iconePause;
 
-    [Header("Volume da Música (separado dos efeitos sonoros)")]
-    public Slider sliderVolumeMusica;
+    [Header("Nomes dos objetos na Canvas (o script acha eles sozinho)")]
+    public string nomeBotaoVoltar = "voltarMusica";
+    public string nomeBotaoPausar = "PausarMusica";
+    public string nomeBotaoPular = "PularMusica";
+    public string nomeSliderVolume = "AjustarVolume";
+
+    // Referências da cena atual. São refeitas toda vez que uma cena carrega.
+    [HideInInspector] public Image imagemBotaoPausar;
+    [HideInInspector] public Slider sliderVolumeMusica;
 
     private int musicaAtual = 0;
     private bool estaPausado = false;
 
     void Awake()
     {
-        // CORRIGIDO: se já existe um MusicaManager (o original, que sobreviveu
-        // à troca de cena), este novo se destrói e o original continua valendo.
+        // Se já existe o MusicaManager original, este duplicado se destrói.
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -38,6 +41,18 @@ public class MusicaManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        // Avisa este script toda vez que uma cena nova termina de carregar.
+        SceneManager.sceneLoaded += AoCarregarCena;
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            SceneManager.sceneLoaded -= AoCarregarCena;
+            Instance = null;
+        }
     }
 
     void Start()
@@ -46,12 +61,103 @@ public class MusicaManager : MonoBehaviour
         if (Instance != this) return;
 
         TocarMusica();
-        ConectarUI(imagemBotaoPausar, sliderVolumeMusica);
+        ReligarUIDaCena();
     }
 
-    // ADICIONADO: religa o ícone de play/pause e o slider de volume da cena atual.
-    // O PlayerMusicaUI chama isso toda vez que o Menu abre, porque o Canvas
-    // antigo foi destruído na troca de cena e o novo precisa ser conectado.
+    void AoCarregarCena(Scene cena, LoadSceneMode modo)
+    {
+        ReligarUIDaCena();
+    }
+
+    // Procura na cena atual os botões e o slider do player e liga cada um
+    // à função certa. Roda no começo do jogo e a cada troca de cena, então
+    // os botões nunca ficam apontando pra objetos de uma cena que já sumiu.
+    void ReligarUIDaCena()
+    {
+        Button voltar = EncontrarBotao(nomeBotaoVoltar);
+        Button pausar = EncontrarBotao(nomeBotaoPausar);
+        Button pular = EncontrarBotao(nomeBotaoPular);
+        Slider slider = EncontrarSlider();
+
+        LigarBotao(voltar, MusicaAnterior);
+        LigarBotao(pausar, AlternarPausa);
+        LigarBotao(pular, ProximaMusica);
+
+        Image icone = null;
+        if (pausar != null)
+        {
+            icone = pausar.targetGraphic as Image;
+            if (icone == null) icone = pausar.GetComponent<Image>();
+        }
+
+        ConectarUI(icone, slider);
+
+        Debug.Log("[MusicaManager] UI religada na cena '" + SceneManager.GetActiveScene().name
+            + "': voltar=" + (voltar != null)
+            + ", pausar=" + (pausar != null)
+            + ", pular=" + (pular != null)
+            + ", slider=" + (slider != null));
+    }
+
+    Button EncontrarBotao(string nome)
+    {
+        Button[] botoes = FindObjectsByType<Button>(FindObjectsInactive.Include);
+
+        foreach (Button b in botoes)
+        {
+            if (string.Equals(b.name, nome, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return b;
+            }
+        }
+
+        return null;
+    }
+
+    Slider EncontrarSlider()
+    {
+        Slider[] sliders = FindObjectsByType<Slider>(FindObjectsInactive.Include);
+
+        // 1) nome exato
+        foreach (Slider s in sliders)
+        {
+            if (string.Equals(s.name, nomeSliderVolume, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return s;
+            }
+        }
+
+        // 2) qualquer slider com "volume" no nome
+        foreach (Slider s in sliders)
+        {
+            if (s.name.ToLower().Contains("volume"))
+            {
+                return s;
+            }
+        }
+
+        // 3) se só existe um slider na cena, é ele
+        if (sliders.Length == 1) return sliders[0];
+
+        return null;
+    }
+
+    void LigarBotao(Button botao, UnityAction acao)
+    {
+        if (botao == null) return;
+
+        // Desliga os OnClick() que foram configurados à mão no Inspector,
+        // porque eles apontam pro objeto antigo e causariam clique duplo.
+        for (int i = 0; i < botao.onClick.GetPersistentEventCount(); i++)
+        {
+            botao.onClick.SetPersistentListenerState(i, UnityEventCallState.Off);
+        }
+
+        botao.onClick.RemoveAllListeners();
+        botao.onClick.AddListener(acao);
+    }
+
+    // Liga o ícone de play/pause e o slider de volume da cena atual.
     public void ConectarUI(Image novaImagemPausar, Slider novoSlider)
     {
         imagemBotaoPausar = novaImagemPausar;
